@@ -12,17 +12,21 @@
 #define bound_LSA_HIGH 1000
 #define BLACK_BOUNDARY  700    // Boundary value to distinguish between black and white readings
 #define Transition_Value  700  //FOR WHITE TO BLACK OR BLACK TO WHITE TRANSITION
+#define pwm 40
 /*
  * weights given to respective line sensor
  */
 const int weights[5] = {-5, -3, 1, 3, 5};
+int current_reading[5];
+int prev_readings[5];
+bool Right_flag=false;
 
 /*
  * Motor value boundts
  */
-int optimum_duty_cycle = 63;
-int lower_duty_cycle = 50;
-int higher_duty_cycle = 76;
+int optimum_duty_cycle = 68;
+int lower_duty_cycle = 55;
+int higher_duty_cycle = 81;
 float left_duty_cycle = 0, right_duty_cycle = 0;
 
 /*
@@ -107,52 +111,131 @@ void calculate_error()
 }
 
 //&&=BOTH -- ||=Only One
+void Leftturn()
+{
+    bool left_turn = true;
+    bool turn_flag1= true;
+
+    while (left_turn) 
+    {
+
+        if (turn_flag1) 
+        {
+            set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
+            set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);  
+            vTaskDelay(300 / portTICK_PERIOD_MS);
+
+            if (current_reading[0] < Transition_Value && current_reading[1] > Transition_Value &&
+                current_reading[2] > Transition_Value && current_reading[3] > Transition_Value &&
+                current_reading[4] < Transition_Value) 
+            {
+                turn_flag1 = false;
+                left_turn = false;
+            }
+        }
+
+    }
+    
+}
+
+void Rightturn()
+{
+
+    bool Right_turn=true;
+
+    while(Right_turn)
+    {
+        bool turn_flag2=true;
+
+        if(turn_flag2)
+        {
+            set_motor_speed(MOTOR_A_0,MOTOR_BACKWARD,pwm);
+            set_motor_speed(MOTOR_A_1,MOTOR_FORWARD,pwm);
+            //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
+        }
+
+        if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]>Transition_Value && current_reading[3]>Transition_Value && current_reading[4]<Transition_Value)
+        {
+            turn_flag2=false;
+            Right_turn=false;
+            continue;
+
+        }
+
+    }
+    
+}
+
+void Uturn()
+{
+
+    bool U_turn=true;
+
+    while(U_turn)
+    {
+        bool turn_flag3=true; 
+
+        if(turn_flag3){
+        set_motor_speed(MOTOR_A_0,MOTOR_FORWARD,pwm);
+        set_motor_speed(MOTOR_A_1,MOTOR_BACKWARD,pwm);
+        //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
+        }
+
+        if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]>Transition_Value && current_reading[3]>Transition_Value && current_reading[4]<Transition_Value)
+        {
+            turn_flag3=false;
+            U_turn=false;
+            continue;
+
+        }
+
+    }
+    
+} 
 
 void LFR()
 {
-    int current_reading[5];
-    int prev_readings[5];
     for(int j = 0; j < 5; j++)
     {
        current_reading[j]= line_sensor_readings.adc_reading[j];
     }
 
-    if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && current_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value &&
-    current_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && current_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)
-
+    /*if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && current_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && current_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && current_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
+    if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value))
     {
-        if(current_var1>Transition_Value && (current_var2>Transition_Value || current_var3>Transition_Value))
+        if(current_reading[0]>Transition_Value && (current_reading[1]>Transition_Value || current_reading[2]>Transition_Value))
+
         {
             //It detects PLUS NODE & Only Left Node
             Leftturn();
         }
 
-        if(current_var1<Transition_Value && current_var5>Transition_Value)
+        /*if(current_reading[0]<Transition_Value && current_reading[4]>Transition_Value)
         {
             //TO CHECK ONLY RIGHT NODE
-            bool Right_flag=true;
+            Right_flag=true;
 
         }
         
-        if(current_var1<Transition_Value || current_var2<Transition_Value ||current_var3<Transition_Value || current_var4<Transition_Value || current_var5<Transition_Value)
+        if(current_reading[0]<Transition_Value || current_reading[1]<Transition_Value ||current_reading[2]<Transition_Value || current_reading[3]<Transition_Value || current_reading[4]<Transition_Value)
         {
             //Dead END
             Uturn();
-        }
+        }*/
 
-
+        
 
     }
     
     for(int k = 0; k < 5; k++)
     {
-       prev_readings[j] = current_reading[j];
+       prev_readings[k] = current_reading[k];
     }
 
 
     if(Right_flag)
-        {
-        if(current_var1<Transition_Value && current_var2<Transition_Value && current_var3<Transition_Value && current_var4<Transition_Value && current_var5<Transition_Value)
+    {
+        if(current_reading[0]<Transition_Value && current_reading[1]<Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
         {
             //IF ONLY RIGHT NODE IS DETECT
             Rightturn();
@@ -160,92 +243,21 @@ void LFR()
         
         }
 
-        if(current_var1<Transition_Value && current_var2>Transition_Value && current_var3<Transition_Value && current_var4<Transition_Value && current_var5<Transition_Value)
+        if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
         {
             //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
             Right_flag=false;
         
         }
-        
-        }
+    
+    }
 
 }
 
-void Leftturn()
-{
-    bool left_turn = true;
-
-    while(left_turn)
-    {
-        bool turn_flag1= true;
-
-        if(turn_flag1){
-        set_motor_speed(MOTOR_A_0,MOTOR_FORWARD,pwm);
-        set_motor_speed(MOTOR_A_1,MOTOR_BACKWARD,pwm);
-        //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>700
-        }
-
-        if(current_var1<Transition_Value && current_var2>Transition_Value && current_var3>Transition_Value && current_var4>Transition_Value && current_var5<Transition_Value)
-        {
-            turn_flag1=false;
-            left_turn=false;
-        }
-
-    }
-    
-}
-
-void Rightturn(){
-
-    bool Right_turn=true;
-
-    while(Right_turn){
-    bool turn_flag2=true;
-
-    if(left_flag2){
-    set_motor_speed(MOTOR_A_0,MOTOR_BACKWARD,pwm);
-    set_motor_speed(MOTOR_A_1,MOTOR_FORWARD,pwm);
-    //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
-    }
-
-    if(current_var1<Transition_Value && current_var2>Transition_Value && current_var3>Transition_Value && current_var4>Transition_Value && current_var5<Transition_Value)
-    {
-        turn_flag2=false;
-        right_turn=false;
-
-    }
-
-    }
-    
-}
-
-void Uturn(){
-
-    bool U_turn=true;
-
-    while(U_turn){
-    bool turn_flag3=true; 
-
-    if(turn_flag3){
-    set_motor_speed(MOTOR_A_0,MOTOR_FORWARD,pwm);
-    set_motor_speed(MOTOR_A_1,MOTOR_BACKWARD,pwm);
-    //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
-    }
-
-    if(current_var1<Transition_Value && current_var2>Transition_Value && current_var3>Transition_Value || current_var4>Transition_Value || current_var5<Transition_Value)
-    {
-        turn_flag3=false;
-        U_turn=false;
-
-    }
-
-    }
-    
-} 
 
 void line_follow_task(void* arg)
 {
-    bool line_follow_flag = true;
+    //bool line_follow_flag = true;
     ESP_ERROR_CHECK(enable_motor_driver(a, NORMAL_MODE));
     ESP_ERROR_CHECK(enable_line_sensor());
     // ESP_ERROR_CHECK(enable_bar_graph());
@@ -260,7 +272,7 @@ void line_follow_task(void* arg)
 //#endif
     while(true)
     {
-        bool line_follow_flag = true;
+        //bool line_follow_flag = true;
 	    line_sensor_readings = read_line_sensor();
 		for(int i = 0; i < 5; i++)
 		{
@@ -269,10 +281,8 @@ void line_follow_task(void* arg)
 		    line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
 		}
 
-        LFR();
-
-	    if(line_follow_flag)
-	    {
+	    /*if(line_follow_flag)
+	    {*/
 		// line_sensor_readings = read_line_sensor();
 		// for(int i = 0; i < 5; i++)
 		// {
@@ -280,7 +290,7 @@ void line_follow_task(void* arg)
 		//     line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
 		//     line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
 		// }
-
+        LFR();
 		calculate_error();
 		calculate_correction();
 		//lsa_to_bar();
@@ -304,7 +314,6 @@ void line_follow_task(void* arg)
 	// #endif
 
 	//         vTaskDelay(10 / portTICK_PERIOD_MS);
-	    }
 	    
 	}    
 
