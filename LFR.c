@@ -9,7 +9,7 @@
 #define WHITE_MARGIN 0
 #define bound_LSA_LOW 0
 #define bound_LSA_HIGH 1000
-#define BLACK_BOUNDARY 500
+#define BLACK_BOUNDARY 550
 // Boundary value to distinguish between black and white readings
 
 /*
@@ -104,6 +104,7 @@ void lsa_readings()
         line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
         line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
         line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
+        vTaskDelay(10 / portTICK_RATE_MS);
     }
 
     int j = 0;
@@ -119,104 +120,100 @@ void lsa_readings()
 
 void left_turn()
 {
-    //  int left = 1;
+    printf("L T \n");
+    // int left = 1;
     // int  flag_1 = 1;
-    //  while(left){
-    //  if(flag_1){
-    //     set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
-    //     set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);
-    //     vTaskDelay(5000/portTICK_RATE_MS);
-    //     }
-    /*if(current_value[1]>BLACK_BOUNDARY && current_value[2]>BLACK_BOUNDARY && current_value[3]>BLACK_BOUNDARY){
-
-                set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-                set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-                left = 0;
-                flag_1 = 0;
-
-                }*/
-    ;
-    while (1)
-    {
-        
+    while(true)
+    {    printf("l");
+        // if(flag_1){
         set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
         set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+        
+        //}
+        // if(current_value[1]>BLACK_BOUNDARY && current_value[2]>BLACK_BOUNDARY && current_value[3]>BLACK_BOUNDARY){
+
+        //             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+        //             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+        //             left = 0;
+        //             flag_1 = 0;
+
+        //             }
     }
 }
 
-void right_turn()
-{
-    int right = 1;
-    int flag_2 = 1;
-    while (right)
-    {
-        if (flag_2)
-        {
-            set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
-            set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
-        }
-        if (current_value[1] > BLACK_BOUNDARY && current_value[2] > BLACK_BOUNDARY && current_value[3] > BLACK_BOUNDARY)
-        {
+// void right_turn()
+// {
+//     // int right = 1;
+//     // int flag_2 = 1;
+//     for (int c = 0; c < 5; c++)
+//     {
+//         // if (flag_2)
+//         //{
+//         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
+//         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
+//         vTaskDelay(1000 / portTICK_RATE_MS);
+//         //}
+//         // if (current_value[1] > BLACK_BOUNDARY && current_value[2] > BLACK_BOUNDARY && current_value[3] > BLACK_BOUNDARY)
+//         // {
 
-            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-            right = 0;
-            flag_2 = 0;
-        }
-    }
-}
-void U_turn()
-{
-    bool u_turn = true;
-    bool flag_3 = true;
-    while (u_turn)
-    {
-        if (flag_3)
-        {
-            set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
-            set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
-        }
-        if (current_value[1] > BLACK_BOUNDARY && current_value[2] > BLACK_BOUNDARY && current_value[3] > BLACK_BOUNDARY)
-        {
+//         //     set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+//         //     set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+//         //     right = 0;
+//         //     flag_2 = 0;
+//         // }
+//     }
+// }
+// void U_turn()
+// {
+//     // bool u_turn = true;
+//     // bool flag_3 = true;
+//     for (int e = 0; e < 5; e++)
+//     {
+//         // if (flag_3)
+//         //{
+//         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
+//         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
+//         vTaskDelay(1000 / portTICK_RATE_MS);
+//         //}
+//         // if (current_value[1] > BLACK_BOUNDARY && current_value[2] > BLACK_BOUNDARY && current_value[3] > BLACK_BOUNDARY)
+//         // {
 
-            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-        }
-    }
-}
+//         //     set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+//         //     set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+//         // }
+//     }
+// }
 void LFR()
-{printf("left turn \n");
-    if ((current_value[0] > BLACK_BOUNDARY && current_value[4] > BLACK_BOUNDARY) && (previous_value[0] < BLACK_BOUNDARY || previous_value[4] < BLACK_BOUNDARY || (previous_value[0] < BLACK_BOUNDARY && previous_value[4] < BLACK_BOUNDARY)))
+{
+    if ((current_value[0] > BLACK_BOUNDARY && current_value[4] > BLACK_BOUNDARY) && (previous_value[0] < BLACK_BOUNDARY || previous_value[4] < BLACK_BOUNDARY))
     {
-    printf("a \n");
+        printf("a \n");
         left_turn();
-        // ESP_LOGI("left turn plus node");
+
     } // detect plus node
-    if ((current_value[0] > BLACK_BOUNDARY && current_value[4] < BLACK_BOUNDARY) && (previous_value[0] < BLACK_BOUNDARY || previous_value[4] > BLACK_BOUNDARY || (previous_value[0] < BLACK_BOUNDARY && previous_value[4] < BLACK_BOUNDARY)))
+    if ((current_value[0] > BLACK_BOUNDARY && current_value[4] < BLACK_BOUNDARY) && (previous_value[0] < BLACK_BOUNDARY || previous_value[4] > BLACK_BOUNDARY))
     {
         printf("b \n");
         left_turn();
-        // ESP_LOGI("left turn only left turn node");  // detect only left turn
     }
-    if ((current_value[0] < BLACK_BOUNDARY && current_value[4] > BLACK_BOUNDARY) && (previous_value[0] > BLACK_BOUNDARY || previous_value[4] < BLACK_BOUNDARY || (previous_value[0] < 500 && previous_value[4] < BLACK_BOUNDARY)))
-    {
-        printf("c \n");
-        right_turn();
-        // ESP_LOGI("right turn only right turn node"); // detect only right turn
-    }
-    if ((current_value[0] < BLACK_BOUNDARY && current_value[1] < BLACK_BOUNDARY && current_value[2] < BLACK_BOUNDARY && current_value[3] < BLACK_BOUNDARY && current_value[4] < BLACK_BOUNDARY) && (previous_value[0] > BLACK_BOUNDARY || previous_value[4] > BLACK_BOUNDARY))
-    {
-        printf("d \n");
-        U_turn();
-        // ESP_LOGI("u turn only dead end node");// detects dead end
-    }
+    // if ((current_value[0] < BLACK_BOUNDARY && current_value[4] > BLACK_BOUNDARY) && (previous_value[0] > BLACK_BOUNDARY || previous_value[4] < BLACK_BOUNDARY))
+    // {
+    //     printf("c \n");
+    //     right_turn();
+    // }
+    // if ((current_value[0] < BLACK_BOUNDARY && current_value[1] < BLACK_BOUNDARY && current_value[2] < BLACK_BOUNDARY && current_value[3] < BLACK_BOUNDARY && current_value[4] < BLACK_BOUNDARY) && (previous_value[0] > BLACK_BOUNDARY || previous_value[4] > BLACK_BOUNDARY))
+    // {
+    //     printf("d \n");
+    //     U_turn();s
+    // }
 }
 
 void line_follow_task(void *arg)
 {
     ESP_ERROR_CHECK(enable_motor_driver(a, NORMAL_MODE));
     ESP_ERROR_CHECK(enable_line_sensor());
-    ESP_ERROR_CHECK(enable_bar_graph());
+    // ESP_ERROR_CHECK(enable_bar_graph());
 #ifdef CONFIG_ENABLE_OLED
     // Initialising the OLED
     ESP_ERROR_CHECK(init_oled());
@@ -229,15 +226,10 @@ void line_follow_task(void *arg)
 
     while (true)
     {
-        line_sensor_readings = read_line_sensor();
-        for (int i = 0; i < 5; i++)
-        {
-            line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
-            line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
-            line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
-        }
+
         lsa_readings();
         LFR();
+        
 
         calculate_error();
         calculate_correction();
@@ -248,8 +240,8 @@ void line_follow_task(void *arg)
         set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, left_duty_cycle);
         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, right_duty_cycle);
 
-        // ESP_LOGI("debug","left_duty_cycle:  %f    ::  right_duty_cycle :  %f  :: error :  %f  correction  :  %f  \n",left_duty_cycle, right_duty_cycle, error, correction);
-        // ESP_LOGI("debug", "KP: %f ::  KI: %f  :: KD: %f", read_pid_const().kp, read_pid_const().ki, read_pid_const().kd);
+       // ESP_LOGI("debug", "left_duty_cycle:  %f    ::  right_duty_cycle :  %f  :: error :  %f  correction  :  %f  \n", left_duty_cycle, right_duty_cycle, error, correction);
+       // ESP_LOGI("debug", "KP: %f ::  KI: %f  :: KD: %f", read_pid_const().kp, read_pid_const().ki, read_pid_const().kd);
 #ifdef CONFIG_ENABLE_OLED
         // Diplaying kp, ki, kd values on OLED
         if (read_pid_const().val_changed)
