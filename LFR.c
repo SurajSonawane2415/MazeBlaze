@@ -1,24 +1,25 @@
 #include <stdio.h>
-#include <freertos/FreeRTOS.h>
+#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "sra_board.h"
 #include "tuning_http_server.h"
+#include <stdbool.h> // Include this header for true and false constants
 
 #define MODE NORMAL_MODE
 #define BLACK_MARGIN 4095
 #define WHITE_MARGIN 0
 #define bound_LSA_LOW 0
 #define bound_LSA_HIGH 1000
-#define BLACK_BOUNDARY 500
-// Boundary value to distinguish between black and white readings
-
+#define BLACK_BOUNDARY  700    // Boundary value to distinguish between black and white readings
+#define Transition_Value  700  //FOR WHITE TO BLACK OR BLACK TO WHITE TRANSITION
+#define pwm 65
 /*
  * weights given to respective line sensor
  */
 const int weights[5] = {-5, -3, 1, 3, 5};
-int current_value[5];
-int previous_value[5];
-int pwm = 80;
+int current_reading[5];
+int prev_readings[5];
+bool Right_flag=false;
 
 /*
  * Motor value boundts
@@ -31,43 +32,55 @@ float left_duty_cycle = 0, right_duty_cycle = 0;
 /*
  * Line Following PID Variables
  */
-float error = 0, prev_error = 0, difference, cumulative_error, correction;
+float error=0, prev_error=0, difference, cumulative_error, correction;
 
 /*
  * Union containing line sensor readings
  */
 line_sensor_array line_sensor_readings;
 
+
+// void lsa_to_bar()
+// {   
+//     uint8_t var = 0x00;                     
+//     bool number[8] = {0,0,0,0,0,0,0,0};
+//     for(int i = 0; i < 5; i++)
+//     {
+//         number[7-i] = (line_sensor_readings.adc_reading[i] < BLACK_BOUNDARY) ? 0 : 1; //If adc value is less than black margin, then set that bit to 0 otherwise 1.
+//         var = bool_to_uint8(number);  //A helper function to convert bool array to unsigned int.
+//         ESP_ERROR_CHECK(set_bar_graph(var)); //Setting bar graph led with unsigned int value.
+//     }
+// }
+
 void calculate_correction()
 {
-    error = error * 10; // we need the error correction in range 0-100 so that we can send it directly as duty cycle paramete
+    error = error*10;  // we need the error correction in range 0-100 so that we can send it directly as duty cycle paramete
     difference = error - prev_error;
     cumulative_error += error;
 
     cumulative_error = bound(cumulative_error, -30, 30);
 
-    correction = read_pid_const().kp * error + read_pid_const().ki * cumulative_error + read_pid_const().kd * difference;
+    correction = read_pid_const().kp*error + read_pid_const().ki*cumulative_error + read_pid_const().kd*difference;
     prev_error = error;
 }
 
 void calculate_error()
 {
     int all_black_flag = 1; // assuming initially all black condition
-    float weighted_sum = 0, sum = 0;
-    float pos = 0;
-    int k = 0;
+    float weighted_sum = 0, sum = 0; 
+    float pos = 0; int k = 0;
 
-    for (int i = 0; i < 5; i++)
+    for(int i = 0; i < 5; i++)
     {
-        if (line_sensor_readings.adc_reading[i] > BLACK_BOUNDARY)
+        if(line_sensor_readings.adc_reading[i] > BLACK_BOUNDARY)
         {
             all_black_flag = 0;
         }
-        if (line_sensor_readings.adc_reading[i] > 700)
+        if(line_sensor_readings.adc_reading[i] > 700)
         {
             k = 1;
         }
-        if (line_sensor_readings.adc_reading[i] < 700)
+        if(line_sensor_readings.adc_reading[i] < 700)
         {
             k = 0;
         }
@@ -75,14 +88,14 @@ void calculate_error()
         sum = sum + k;
     }
 
-    if (sum != 0) // sum can never be 0 but just for safety purposes
+    if(sum != 0) // sum can never be 0 but just for safety purposes
     {
         pos = (weighted_sum - 1) / sum; // This will give us the position wrt line. if +ve then bot is facing left and if -ve the bot is facing to right.
     }
 
-    if (all_black_flag == 1) // If all black then we check for previous error to assign current error.
+    if(all_black_flag == 1)  // If all black then we check for previous error to assign current error.
     {
-        if (prev_error > 0)
+        if(prev_error > 0)
         {
             error = 2.5;
         }
@@ -96,185 +109,236 @@ void calculate_error()
         error = pos;
     }
 }
+
+
 void lsa_readings()
 {
-    line_sensor_readings = read_line_sensor();
-    for (int i = 0; i < 5; i++)
-    {
-        line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
-        line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
-        line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
-        vTaskDelay(10 / portTICK_RATE_MS);
-    }
-
-    int j = 0;
-    for (j = 0; j < 5; j++)
-    {
-        current_value[j] = line_sensor_readings.adc_reading[j];
-    }
-    for (int k = 0; k < 5; k++)
-    {
-        previous_value[j] = current_value[j];
-    }
+line_sensor_readings = read_line_sensor();
+for(int i = 0; i < 5; i++)
+{
+    line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
+    line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
+    line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
+    vTaskDelay(10 / portTICK_RATE_MS);
 }
+}
+void current_sens_readings()
+{
+  
+    for(int j = 0; j < 5; j++)
+    { 
+       current_reading[j]= line_sensor_readings.adc_reading[j];
+    }
+} 
 
-void left_turn()
+void previous_sens_readings()
+{
+    for(int k = 0; k < 5; k++)
+    {
+       prev_readings[k] = current_reading[k];
+    }
+
+}
+//&&=BOTH -- ||=Only One
+void Leftturn()
 {
     printf("L T \n");
     int left = 1;
-    int flag_1 = 1;
 
     while (left)
     {
 
-        if(flag_1){
         printf("y\n");
         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
         vTaskDelay(10 / portTICK_PERIOD_MS);
         
-        }
         lsa_readings();
-        if (current_value[0] < BLACK_BOUNDARY && current_value[4]< BLACK_BOUNDARY && current_value[3]> BLACK_BOUNDARY )
+        current_sens_readings();
+        if (current_reading[0] < Transition_Value && current_reading[4]< Transition_Value && current_reading[3]> Transition_Value )
         {
             printf("z\n");
-            
-
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
+            vTaskDelay(100/ portTICK_PERIOD_MS);
             left = 0;
-            flag_1 = 0;
             break;
         }
-
-        // if (x)
-        // {
-        //    printf("z\n");
-        //    set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-        //    set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-        //    vTaskDelay(100 / portTICK_PERIOD_MS); 
-          
-        // }
         vTaskDelay(10/portTICK_PERIOD_MS);
     }
 }
 
-// void right_turn()
-// {
-//     // int right = 1;
-//     // int flag_2 = 1;
-//     for (int c = 0; c < 5; c++)
-//     {
-//         // if (flag_2)
-//         //{
-//         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
-//         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
-//         vTaskDelay(1000 / portTICK_RATE_MS);
-//         //}
-//         // if (current_value[1] > BLACK_BOUNDARY && current_value[2] > BLACK_BOUNDARY && current_value[3] > BLACK_BOUNDARY)
-//         // {
 
-//         //     set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-//         //     set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-//         //     right = 0;
-//         //     flag_2 = 0;
-//         // }
-//     }
-// }
-// void U_turn()
-// {
-//     // bool u_turn = true;
-//     // bool flag_3 = true;
-//     for (int e = 0; e < 5; e++)
-//     {
-//         // if (flag_3)
-//         //{
-//         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
-//         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
-//         vTaskDelay(1000 / portTICK_RATE_MS);
-//         //}
-//         // if (current_value[1] > BLACK_BOUNDARY && current_value[2] > BLACK_BOUNDARY && current_value[3] > BLACK_BOUNDARY)
-//         // {
 
-//         //     set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-//         //     set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-//         // }
-//     }
-// }
-void LFR()
+void Rightturn()
 {
-    if ((current_value[0] > BLACK_BOUNDARY && current_value[4] > BLACK_BOUNDARY) && (previous_value[0] < BLACK_BOUNDARY || previous_value[4] < BLACK_BOUNDARY))
-    {
-        printf("a \n");
-        left_turn();
 
-    } // detect plus node
+    bool Right_turn=true;
 
-    if ((current_value[0] > BLACK_BOUNDARY && current_value[4] < BLACK_BOUNDARY) && (previous_value[0] < BLACK_BOUNDARY || previous_value[4] > BLACK_BOUNDARY))
+    while(Right_turn)
     {
-        printf("b \n");
-        printf("b \n");
-        printf("b \n");
-        printf("b \n");
-        left_turn();
+        bool turn_flag2=true;
+        if(turn_flag2)
+        {
+            set_motor_speed(MOTOR_A_0,MOTOR_BACKWARD,pwm);
+            set_motor_speed(MOTOR_A_1,MOTOR_FORWARD,pwm);
+            //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
+        }
+
+        if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]>Transition_Value && current_reading[3]>Transition_Value && current_reading[4]<Transition_Value)
+        {
+            turn_flag2=false;
+            Right_turn=false;
+            continue;
+
+        }
+
     }
     
-    // if ((current_value[0] < BLACK_BOUNDARY && current_value[4] > BLACK_BOUNDARY) && (previous_value[0] > BLACK_BOUNDARY || previous_value[4] < BLACK_BOUNDARY))
-    // {
-    //     printf("c \n");
-    //     right_turn();
-    // }
-    // if ((current_value[0] < BLACK_BOUNDARY && current_value[1] < BLACK_BOUNDARY && current_value[2] < BLACK_BOUNDARY && current_value[3] < BLACK_BOUNDARY && current_value[4] < BLACK_BOUNDARY) && (previous_value[0] > BLACK_BOUNDARY || previous_value[4] > BLACK_BOUNDARY))
-    // {
-    //     printf("d \n");
-    //     U_turn();s
-    // }
 }
 
-void line_follow_task(void *arg)
+// void Uturn()
+// { 
+
+//     bool U_turn=true;
+
+//     while(U_turn)
+//     {
+//         bool turn_flag3=true; 
+
+//         if(turn_flag3){
+//         set_motor_speed(MOTOR_A_0,MOTOR_FORWARD,pwm);
+//         set_motor_speed(MOTOR_A_1,MOTOR_BACKWARD,pwm);
+//         //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
+//         }
+
+//         if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]>Transition_Value && current_reading[3]>Transition_Value && current_reading[4]<Transition_Value)
+//         {
+//             turn_flag3=false;
+//             U_turn=false;
+//             continue;
+
+//         }
+
+//     }
+    
+// } 
+
+void LFR()
 {
+    current_sens_readings();
+    /*if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && current_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && current_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && current_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
+    if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value))
+    {
+        printf("trans\n");
+        if(current_reading[0]>Transition_Value && (current_reading[1]>Transition_Value || current_reading[2]>Transition_Value))
+        {
+            //It detects PLUS NODE & Only Left Node
+            printf("left\n");
+            Leftturn();
+        }
+
+        
+        
+        /*if(current_reading[0]<Transition_Value && current_reading[4]>Transition_Value)
+        {
+            //TO CHECK ONLY RIGHT NODE
+            Right_flag=true;
+
+        }
+        
+        if(current_reading[0]<Transition_Value || current_reading[1]<Transition_Value ||current_reading[2]<Transition_Value || current_reading[3]<Transition_Value || current_reading[4]<Transition_Value)
+        {
+            //Dead END
+            Uturn();
+        }*/
+
+    }
+    previous_sens_readings();
+    // if(Right_flag)
+    // {
+    //     if(current_reading[0]<Transition_Value && current_reading[1]<Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    //     {
+    //         //IF ONLY RIGHT NODE IS DETECT
+    //         Rightturn();
+    //         Right_flag= false;
+        
+    //     }
+
+    //     if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    //     {
+    //         //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
+    //         Right_flag=false;
+        
+    //     }
+    
+    // }
+
+}
+
+
+void line_follow_task(void* arg)
+{
+    //bool line_follow_flag = true;
     ESP_ERROR_CHECK(enable_motor_driver(a, NORMAL_MODE));
     ESP_ERROR_CHECK(enable_line_sensor());
     // ESP_ERROR_CHECK(enable_bar_graph());
-#ifdef CONFIG_ENABLE_OLED
-    // Initialising the OLED
-    ESP_ERROR_CHECK(init_oled());
-    vTaskDelay(100);
+// #ifdef CONFIG_ENABLE_OLED
+//     // Initialising the OLED
+//     ESP_ERROR_CHECK(init_oled());
+//     vTaskDelay(100);
 
-    // Clearing the screen
-    lv_obj_clean(lv_scr_act());
+//     // Clearing the screen
+//     lv_obj_clean(lv_scr_act());
 
-#endif
-
-    while (true)
+//#endif
+    while(true)
     {
+        //bool line_follow_flag = true;
+	    // line_sensor_readings = read_line_sensor();
+		// for(int i = 0; i < 5; i++)
+		// {
+		//     line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
+		//     line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
+		//     line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
+		// }
 
-        lsa_readings();
+	    /*if(line_follow_flag)
+	    {*/
+		// line_sensor_readings = read_line_sensor();
+		// for(int i = 0; i < 5; i++)
+		// {
+		//     line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
+		//     line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
+		//     line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
+		// }
+        lsa_readings();        
         LFR();
+		calculate_error();
+		calculate_correction();
+		//lsa_to_bar();
 
-        calculate_error();
-        calculate_correction();
+		left_duty_cycle = bound((optimum_duty_cycle + correction), lower_duty_cycle, higher_duty_cycle);
+		right_duty_cycle = bound((optimum_duty_cycle - correction), lower_duty_cycle, higher_duty_cycle);
 
-        left_duty_cycle = bound((optimum_duty_cycle + correction), lower_duty_cycle, higher_duty_cycle);
-        right_duty_cycle = bound((optimum_duty_cycle - correction), lower_duty_cycle, higher_duty_cycle);
+		set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, left_duty_cycle);
+		set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, right_duty_cycle);
+       
 
-        set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, left_duty_cycle);
-        set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, right_duty_cycle);
+		//ESP_LOGI("debug","left_duty_cycle:  %f    ::  right_duty_cycle :  %f  :: error :  %f  correction  :  %f  \n",left_duty_cycle, right_duty_cycle, error, correction);
+		
+	// #ifdef CONFIG_ENABLE_OLED
+	//         // Diplaying kp, ki, kd values on OLED 
+	//         if (read_pid_const().val_changed)
+	//         {
+	//             display_pid_values(read_pid_const().kp, read_pid_const().ki, read_pid_const().kd);
+	//             reset_val_changed_pid_const();
+	//         }
+	// #endif
 
-        // ESP_LOGI("debug", "left_duty_cycle:  %f    ::  right_duty_cycle :  %f  :: error :  %f  correction  :  %f  \n", left_duty_cycle, right_duty_cycle, error, correction);
-        // ESP_LOGI("debug", "KP: %f ::  KI: %f  :: KD: %f", read_pid_const().kp, read_pid_const().ki, read_pid_const().kd);
-#ifdef CONFIG_ENABLE_OLED
-        // Diplaying kp, ki, kd values on OLED
-        if (read_pid_const().val_changed)
-        {
-            display_pid_values(read_pid_const().kp, read_pid_const().ki, read_pid_const().kd);
-            reset_val_changed_pid_const();
-        }
-#endif
-
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
+	vTaskDelay(10 / portTICK_PERIOD_MS);
+	    
+	}    
 
     vTaskDelete(NULL);
 }
@@ -282,5 +346,5 @@ void line_follow_task(void *arg)
 void app_main()
 {
     xTaskCreate(&line_follow_task, "line_follow_task", 4096, NULL, 1, NULL);
-    start_tuning_http_server();
+    //start_tuning_http_server();
 }
