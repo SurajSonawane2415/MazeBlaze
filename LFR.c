@@ -17,16 +17,17 @@
  * weights given to respective line sensor
  */
 const int weights[5] = {-5, -3, 1, 3, 5};
+//For LFR
 int current_reading[5];
 int prev_readings[5];
-bool Right_flag=false;
+int Right_flag;
 
 /*
  * Motor value boundts
  */
-int optimum_duty_cycle = 59;
-int lower_duty_cycle = 46;
-int higher_duty_cycle = 71;
+int optimum_duty_cycle = 57;
+int lower_duty_cycle = 44;
+int higher_duty_cycle = 69;
 float left_duty_cycle = 0, right_duty_cycle = 0;
 
 /*
@@ -110,7 +111,6 @@ void calculate_error()
     }
 }
 
-
 void lsa_readings()
 {
 line_sensor_readings = read_line_sensor();
@@ -173,30 +173,53 @@ void Leftturn()
 void Rightturn()
 {
 
-    bool Right_turn=true;
+    printf("R T \n");
+    int right = 1;
 
-    while(Right_turn)
+    while (right)
     {
-        bool turn_flag2=true;
-        if(turn_flag2)
+
+        printf("ry\n");
+        set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
+        set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+        
+        lsa_readings();
+        current_sens_readings();
+        if (current_reading[0] < Transition_Value && current_reading[4]< Transition_Value && current_reading[3]> Transition_Value )
         {
-            set_motor_speed(MOTOR_A_0,MOTOR_BACKWARD,pwm);
-            set_motor_speed(MOTOR_A_1,MOTOR_FORWARD,pwm);
-            //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
+            printf("rz\n");
+            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+            vTaskDelay(10/ portTICK_PERIOD_MS);
+            right = 0;
+            break;
         }
-
-        if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]>Transition_Value && current_reading[3]>Transition_Value && current_reading[4]<Transition_Value)
-        {
-            turn_flag2=false;
-            Right_turn=false;
-            continue;
-
-        }
-
+        vTaskDelay(10/portTICK_PERIOD_MS);
     }
     
 }
 
+void check_only_right()
+{   
+    current_sens_readings();
+    printf("check");
+    if(current_reading[0]<Transition_Value && current_reading[1]<Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    {
+        //IF ONLY RIGHT NODE IS DETECT
+        printf("turn on");
+        Rightturn();
+        Right_flag= 0;
+       // Right_flag= 0   
+    }
+    // if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    // {
+    //     //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
+    //     //Right_flag=0;
+    //     printf("turn off");
+    
+    // }
+}
 // void Uturn()
 // { 
 
@@ -236,23 +259,28 @@ void LFR()
             //It detects PLUS NODE & Only Left Node
             printf("left\n");
             Leftturn();
+            Right_flag= 0;
         }
 
-        
-        
-        /*if(current_reading[0]<Transition_Value && current_reading[4]>Transition_Value)
+        if(current_reading[0]<Transition_Value && current_reading[4]>Transition_Value)
         {
             //TO CHECK ONLY RIGHT NODE
-            Right_flag=true;
+            Right_flag=1;
+            printf("flag on");
 
         }
-        
+        /*
         if(current_reading[0]<Transition_Value || current_reading[1]<Transition_Value ||current_reading[2]<Transition_Value || current_reading[3]<Transition_Value || current_reading[4]<Transition_Value)
         {
             //Dead END
             Uturn();
         }*/
 
+    }
+    if (Right_flag)
+    { 
+      printf("checking is on"); 
+      check_only_right();
     }
     previous_sens_readings();
     // if(Right_flag)
@@ -261,14 +289,16 @@ void LFR()
     //     {
     //         //IF ONLY RIGHT NODE IS DETECT
     //         Rightturn();
-    //         Right_flag= false;
-        
+    //         Right_flag= 0;
+    //         printf("turn on");
+
     //     }
 
     //     if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
     //     {
     //         //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
-    //         Right_flag=false;
+    //         Right_flag=0;
+    //         printf("turn off");
         
     //     }
     
