@@ -18,16 +18,16 @@
  */
 const int weights[5] = {-5, -3, 1, 3, 5};
 //For LFR
-int current_reading[5];
+//int current_reading[5];
 int prev_readings[5];
-int Right_flag;
+int Right_flag=0;
 
 /*
  * Motor value boundts
  */
-int optimum_duty_cycle = 57;
-int lower_duty_cycle = 44;
-int higher_duty_cycle = 69;
+int optimum_duty_cycle = 62;
+int lower_duty_cycle = 49;
+int higher_duty_cycle = 74;
 float left_duty_cycle = 0, right_duty_cycle = 0;
 
 /*
@@ -122,20 +122,20 @@ for(int i = 0; i < 5; i++)
     vTaskDelay(10 / portTICK_RATE_MS);
 }
 }
-void current_sens_readings()
+/*void current_sens_readings()
 {
   
     for(int j = 0; j < 5; j++)
     { 
-       current_reading[j]= line_sensor_readings.adc_reading[j];
+       line_sensor_readings.adc_reading[j]= line_sensor_readings.adc_reading[j];
     }
-} 
+}*/
 
 void previous_sens_readings()
 {
     for(int k = 0; k < 5; k++)
     {
-       prev_readings[k] = current_reading[k];
+       prev_readings[k] = line_sensor_readings.adc_reading[k];
     }
 
 }
@@ -148,14 +148,13 @@ void Leftturn()
     while (left)
     {
 
+        lsa_readings();
         printf("y\n");
         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
         vTaskDelay(10 / portTICK_PERIOD_MS);
-        
-        lsa_readings();
-        current_sens_readings();
-        if (current_reading[0] < Transition_Value && current_reading[4]< Transition_Value && current_reading[3]> Transition_Value )
+       
+        if (line_sensor_readings.adc_reading[0] < Transition_Value && line_sensor_readings.adc_reading[4]< Transition_Value && line_sensor_readings.adc_reading[3]> Transition_Value )
         {
             printf("z\n");
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
@@ -179,14 +178,13 @@ void Rightturn()
     while (right)
     {
 
+        lsa_readings();
         printf("ry\n");
         set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
         set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);
         vTaskDelay(10 / portTICK_PERIOD_MS);
         
-        lsa_readings();
-        current_sens_readings();
-        if (current_reading[0] < Transition_Value && current_reading[4]< Transition_Value && current_reading[3]> Transition_Value )
+        if (line_sensor_readings.adc_reading[0] < Transition_Value && line_sensor_readings.adc_reading[4]< Transition_Value && line_sensor_readings.adc_reading[3]> Transition_Value )
         {
             printf("rz\n");
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
@@ -202,9 +200,9 @@ void Rightturn()
 
 void check_only_right()
 {   
-    current_sens_readings();
+    lsa_readings();
     printf("check");
-    if(current_reading[0]<Transition_Value && current_reading[1]<Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
     {
         //IF ONLY RIGHT NODE IS DETECT
         printf("turn on");
@@ -212,7 +210,7 @@ void check_only_right()
         Right_flag= 0;
        // Right_flag= 0   
     }
-    // if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    // if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
     // {
     //     //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
     //     //Right_flag=0;
@@ -235,7 +233,7 @@ void check_only_right()
 //         //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
 //         }
 
-//         if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]>Transition_Value && current_reading[3]>Transition_Value && current_reading[4]<Transition_Value)
+//         if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]>Transition_Value && line_sensor_readings.adc_reading[2]>Transition_Value && line_sensor_readings.adc_reading[3]>Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
 //         {
 //             turn_flag3=false;
 //             U_turn=false;
@@ -246,35 +244,39 @@ void check_only_right()
 //     }
     
 // } 
-
 void LFR()
 {
-    current_sens_readings();
-    /*if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && current_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && current_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && current_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
-    if ((prev_readings[0]<Transition_Value && current_reading[0]>Transition_Value) || (prev_readings[4]<Transition_Value && current_reading[4]>Transition_Value))
+    lsa_readings();
+    /*if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
+    if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value))
     {
         printf("trans\n");
-        if(current_reading[0]>Transition_Value && (current_reading[1]>Transition_Value || current_reading[2]>Transition_Value))
+        if(line_sensor_readings.adc_reading[0]>Transition_Value && (line_sensor_readings.adc_reading[1]>Transition_Value || line_sensor_readings.adc_reading[2]>Transition_Value))
         {
             //It detects PLUS NODE & Only Left Node
             printf("left\n");
-            Leftturn();
             Right_flag= 0;
+            Leftturn();
+            
         }
 
-        if(current_reading[0]<Transition_Value && current_reading[4]>Transition_Value)
+        if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)
         {
             //TO CHECK ONLY RIGHT NODE
             Right_flag=1;
             printf("flag on");
 
         }
-        /*
-        if(current_reading[0]<Transition_Value || current_reading[1]<Transition_Value ||current_reading[2]<Transition_Value || current_reading[3]<Transition_Value || current_reading[4]<Transition_Value)
+
+        //I also tried by removing this part of U-Turn detection.. but still getting same error(bot work unstabelly)
+        if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
         {
             //Dead END
-            Uturn();
-        }*/
+            printf("U turn");
+            Right_flag= 0;
+            Rightturn();
+
+        }
 
     }
     if (Right_flag)
@@ -285,7 +287,7 @@ void LFR()
     previous_sens_readings();
     // if(Right_flag)
     // {
-    //     if(current_reading[0]<Transition_Value && current_reading[1]<Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    //     if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
     //     {
     //         //IF ONLY RIGHT NODE IS DETECT
     //         Rightturn();
@@ -294,7 +296,7 @@ void LFR()
 
     //     }
 
-    //     if(current_reading[0]<Transition_Value && current_reading[1]>Transition_Value && current_reading[2]<Transition_Value && current_reading[3]<Transition_Value && current_reading[4]<Transition_Value)
+    //     if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
     //     {
     //         //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
     //         Right_flag=0;
