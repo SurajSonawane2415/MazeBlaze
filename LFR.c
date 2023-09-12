@@ -218,6 +218,7 @@ void check_only_right()
     
     // }
 }
+
 // void Uturn()
 // { 
 
@@ -346,6 +347,7 @@ void line_follow_task(void* arg)
 		// }
         lsa_readings();        
         LFR();
+        lsa_readings();
 		calculate_error();
 		calculate_correction();
 		//lsa_to_bar();
