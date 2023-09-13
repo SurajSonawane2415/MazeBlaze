@@ -152,7 +152,6 @@ void Leftturn()
         printf("y\n");
         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
         set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
        
         if (line_sensor_readings.adc_reading[0] < Transition_Value && line_sensor_readings.adc_reading[4]< Transition_Value && line_sensor_readings.adc_reading[3]> Transition_Value )
         {
@@ -182,7 +181,6 @@ void Rightturn()
         printf("ry\n");
         set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
         set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
         
         if (line_sensor_readings.adc_reading[0] < Transition_Value && line_sensor_readings.adc_reading[4]< Transition_Value && line_sensor_readings.adc_reading[3]> Transition_Value )
         {
@@ -247,7 +245,7 @@ void check_only_right()
 // } 
 void LFR()
 {
-    lsa_readings();
+    //lsa_readings();
     /*if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
     if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value))
     {
@@ -322,7 +320,7 @@ void line_follow_task(void* arg)
 //     vTaskDelay(100);
 
 //     // Clearing the screen
-//     lv_obj_clean(lv_scr_act());
+//     lv_obj_clean(lv_added LSA readings function before correction function in code.scr_act());
 
 //#endif
     while(true)
@@ -345,9 +343,9 @@ void line_follow_task(void* arg)
 		//     line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
 		//     line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
 		// }
-        lsa_readings();        
-        LFR();
-        lsa_readings();
+	        lsa_readings();        
+	        LFR();
+	        lsa_readings();
 		calculate_error();
 		calculate_correction();
 		//lsa_to_bar();
@@ -380,5 +378,5 @@ void line_follow_task(void* arg)
 void app_main()
 {
     xTaskCreate(&line_follow_task, "line_follow_task", 4096, NULL, 1, NULL);
-    //start_tuning_http_server();
+    start_tuning_http_server();
 }
