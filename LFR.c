@@ -21,13 +21,15 @@ const int weights[5] = {-5, -3, 1, 3, 5};
 //int current_reading[5];
 int prev_readings[5];
 int Right_flag=0;
+int counter=0;
+int  left_flag_trans=0;
 
 /*
  * Motor value boundts
  */
-int optimum_duty_cycle = 62;
-int lower_duty_cycle = 49;
-int higher_duty_cycle = 74;
+int optimum_duty_cycle = 60;
+int lower_duty_cycle = 55;
+int higher_duty_cycle = 65;
 float left_duty_cycle = 0, right_duty_cycle = 0;
 
 /*
@@ -254,36 +256,39 @@ void LFR()
         {
             //It detects PLUS NODE & Only Left Node
             printf("left\n");
-            Right_flag= 0;
-            Leftturn();
-            
+            left_flag_trans=1;
+            //Leftturn();         
         }
-
-        if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)
-        {
-            //TO CHECK ONLY RIGHT NODE
-            Right_flag=1;
-            printf("flag on");
-
-        }
-
-        //I also tried by removing this part of U-Turn detection.. but still getting same error(bot work unstabelly)
-        if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
-        {
-            //Dead END
-            printf("U turn");
-            Right_flag= 0;
-            Rightturn();
-
-        }
-
+     
     }
-    if (Right_flag)
+    
+    if(left_flag_trans && line_sensor_readings.adc_reading[0]>Transition_Value)
+    {
+      counter++;
+      printf("%d\n", counter);
+    }
+    
+    if(line_sensor_readings.adc_reading[0]<Transition_Value)
+    {
+    
+      counter=0;
+      left_flag_trans=0;
+      printf("%d\n", counter);
+    
+    }
+    /*if(counter>=15 && line_sensor_readings.adc_reading[0]>Transition_Value)
+    {
+      Leftturn();
+      counter=0;
+    }*/
+ /*   if (Right_flag)
     { 
       printf("checking is on"); 
       check_only_right();
-    }
+    }*/
     previous_sens_readings();
+    
+    
     // if(Right_flag)
     // {
     //     if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
