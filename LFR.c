@@ -1,110 +1,62 @@
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "sra_board.h"
+#include "mazeblaze2.h"
 #include "tuning_http_server.h"
-#include <stdbool.h> // Include this header for true and false constants
+#include "driver/gpio.h"
 
-#define MODE NORMAL_MODE
-#define BLACK_MARGIN 4095
-#define WHITE_MARGIN 0
-#define bound_LSA_LOW 0
-#define bound_LSA_HIGH 1000
-#define BLACK_BOUNDARY  700    // Boundary value to distinguish between black and white readings
-#define Transition_Value  700  //FOR WHITE TO BLACK OR BLACK TO WHITE TRANSITION
-#define pwm 65
-/*
- * weights given to respective line sensor
- */
-const int weights[5] = {-5, -3, 1, 3, 5};
-//For LFR
-//int current_reading[5];
-int prev_readings[5];
-int Right_flag=0;
-int counter=0;
-int  left_flag_trans=0;
 
-/*
- * Motor value boundts
- */
-int optimum_duty_cycle = 60;
-int lower_duty_cycle = 55;
-int higher_duty_cycle = 65;
+float error = 0, prev_error = 0, difference, cumulative_error, correction;
 float left_duty_cycle = 0, right_duty_cycle = 0;
 
-/*
- * Line Following PID Variables
- */
-float error=0, prev_error=0, difference, cumulative_error, correction;
+float kp = 35, ki = 0.01, kd = 60;
 
-/*
- * Union containing line sensor readings
- */
-line_sensor_array line_sensor_readings;
+const int weights[5] = {3, 1, 0, -1, -3};
 
+TaskHandle_t taskhandle1 = NULL;
 
-// void lsa_to_bar()
-// {   
-//     uint8_t var = 0x00;                     
-//     bool number[8] = {0,0,0,0,0,0,0,0};
-//     for(int i = 0; i < 5; i++)
-//     {
-//         number[7-i] = (line_sensor_readings.adc_reading[i] < BLACK_BOUNDARY) ? 0 : 1; //If adc value is less than black margin, then set that bit to 0 otherwise 1.
-//         var = bool_to_uint8(number);  //A helper function to convert bool array to unsigned int.
-//         ESP_ERROR_CHECK(set_bar_graph(var)); //Setting bar graph led with unsigned int value.
-//     }
-// }
+// MOTOR A0 ---> Right
+// MOTOR A1 ---> Left
 
-void calculate_correction()
-{
-    error = error*10;  // we need the error correction in range 0-100 so that we can send it directly as duty cycle paramete
-    difference = error - prev_error;
-    cumulative_error += error;
+/*This method involves tuning kp , ki ,kd physically*/
+#define GOOD_DUTY_CYCLE 80
+#define MIN_DUTY_CYCLE 50
+#define MAX_DUTY_CYCLE 85
 
-    cumulative_error = bound(cumulative_error, -30, 30);
+#define PWM 80
+/*variables which help to decide which turns to take*/
 
-    correction = read_pid_const().kp*error + read_pid_const().ki*cumulative_error + read_pid_const().kd*difference;
-    prev_error = error;
-}
+// all booleans
+bool ll = false;
 
 void calculate_error()
 {
-    int all_black_flag = 1; // assuming initially all black condition
-    float weighted_sum = 0, sum = 0; 
-    float pos = 0; int k = 0;
 
-    for(int i = 0; i < 5; i++)
+    int all_black_flag = 1; // assuming initially all black condition
+    float weighted_sum = 0, sum = 0;
+    float pos = 0;
+
+    for (int i = 0; i < 5; i++)
     {
-        if(line_sensor_readings.adc_reading[i] > BLACK_BOUNDARY)
+        if (lsa_reading[i] > BLACK_PATCH)
         {
             all_black_flag = 0;
         }
-        if(line_sensor_readings.adc_reading[i] > 700)
-        {
-            k = 1;
-        }
-        if(line_sensor_readings.adc_reading[i] < 700)
-        {
-            k = 0;
-        }
-        weighted_sum += (float)(weights[i]) * k;
-        sum = sum + k;
+        weighted_sum += (float)(weights[i]) * (lsa_reading[i]);
+        sum = sum + lsa_reading[i];
     }
 
-    if(sum != 0) // sum can never be 0 but just for safety purposes
+    if (sum != 0) // sum can never be 0 but just for safety purposes
     {
-        pos = (weighted_sum - 1) / sum; // This will give us the position wrt line. if +ve then bot is facing left and if -ve the bot is facing to right.
+        pos = weighted_sum / sum; // This will give us the position wrt line. if +ve then bot is facing left and if -ve the bot is facing to right.
     }
 
-    if(all_black_flag == 1)  // If all black then we check for previous error to assign current error.
+    if (all_black_flag == 1) // If all black then we check for previous error to assign current error.
     {
-        if(prev_error > 0)
+        if (prev_error > 0)
         {
-            error = 2.5;
+            error = 3;
         }
         else
         {
-            error = -2.5;
+            error = -3;
         }
     }
     else
@@ -112,36 +64,31 @@ void calculate_error()
         error = pos;
     }
 }
+// end of function
 
-void lsa_readings()
+void calculate_correction()
 {
-line_sensor_readings = read_line_sensor();
-for(int i = 0; i < 5; i++)
-{
-    line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
-    line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
-    line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
-    vTaskDelay(10 / portTICK_RATE_MS);
-}
-}
-/*void current_sens_readings()
-{
-  
-    for(int j = 0; j < 5; j++)
-    { 
-       line_sensor_readings.adc_reading[j]= line_sensor_readings.adc_reading[j];
-    }
-}*/
+    error = error * 10;              // we need the error correction in range 0-100 so that we can send it directly as duty cycle paramete
+    difference = error - prev_error; // used for calcuating kd
+    cumulative_error += error;       // used for calculating ki
 
-void previous_sens_readings()
-{
-    for(int k = 0; k < 5; k++)
-    {
-       prev_readings[k] = line_sensor_readings.adc_reading[k];
-    }
+    cumulative_error = bound(cumulative_error, -30, 30);               // bounding cumulative_error to avoid the issue of cumulative_error being very large
+    correction = kp * error + ki * cumulative_error + kd * difference; // defined in http_server.c
 
+    prev_error = error; // update error
 }
-//&&=BOTH -- ||=Only One
+// end of function
+
+float bound(float val, float min, float max) // To bound a certain value in range MAX to MIN
+{
+    if (val > max)
+        val = max;
+    else if (val < min)
+        val = min;
+    return val;
+}
+// end of function
+
 void Leftturn()
 {
     printf("L T \n");
@@ -150,132 +97,75 @@ void Leftturn()
     while (left)
     {
 
-        lsa_readings();
+        get_raw_lsa();
         printf("y\n");
-        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, pwm);
-        set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, pwm);
-       
-        if (line_sensor_readings.adc_reading[0] < Transition_Value && line_sensor_readings.adc_reading[4]< Transition_Value && line_sensor_readings.adc_reading[3]> Transition_Value )
+        
+        if (lsa_reading[1] == 0)
         {
-            printf("z\n");
+            ll = true;
+        }
+
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, PWM);
+        set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
+
+        if (lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && ll)
+        {
+            vTaskDelay(40 / portTICK_PERIOD_MS);
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-            vTaskDelay(100/ portTICK_PERIOD_MS);
+            ll = 0;
             left = 0;
             break;
+            printf("E\n");
         }
         vTaskDelay(10/portTICK_PERIOD_MS);
     }
 }
 
-
-
-void Rightturn()
+void straight()
 {
+    calculate_error();
+    calculate_correction();
 
-    printf("R T \n");
-    int right = 1;
+    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
 
-    while (right)
-    {
-
-        lsa_readings();
-        printf("ry\n");
-        set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, pwm);
-        set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, pwm);
-        
-        if (line_sensor_readings.adc_reading[0] < Transition_Value && line_sensor_readings.adc_reading[4]< Transition_Value && line_sensor_readings.adc_reading[3]> Transition_Value )
-        {
-            printf("rz\n");
-            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-            vTaskDelay(10/ portTICK_PERIOD_MS);
-            right = 0;
-            break;
-        }
-        vTaskDelay(10/portTICK_PERIOD_MS);
-    }
+    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
+    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
     
+    vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
-void check_only_right()
-{   
-    lsa_readings();
-    printf("check");
-    if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
-    {
-        //IF ONLY RIGHT NODE IS DETECT
-        printf("turn on");
-        Rightturn();
-        Right_flag= 0;
-       // Right_flag= 0   
-    }
-    // if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
-    // {
-    //     //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
-    //     //Right_flag=0;
-    //     printf("turn off");
-    
-    // }
-}
-
-// void Uturn()
-// { 
-
-//     bool U_turn=true;
-
-//     while(U_turn)
-//     {
-//         bool turn_flag3=true; 
-
-//         if(turn_flag3){
-//         set_motor_speed(MOTOR_A_0,MOTOR_FORWARD,pwm);
-//         set_motor_speed(MOTOR_A_1,MOTOR_BACKWARD,pwm);
-//         //TURN TILL IT WILL DETECT WHITE LINE WHITE LINE DETECTED 2 3 4>Transition_Value
-//         }
-
-//         if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]>Transition_Value && line_sensor_readings.adc_reading[2]>Transition_Value && line_sensor_readings.adc_reading[3]>Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
-//         {
-//             turn_flag3=false;
-//             U_turn=false;
-//             continue;
-
-//         }
-
-//     }
-    
-// } 
 void LFR()
 {
     //lsa_readings();
+    get_raw_lsa();
+    int left_flag=0;
     /*if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
-    if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value))
+    if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) // LEFT
     {
-        printf("trans\n");
-        if(line_sensor_readings.adc_reading[0]>Transition_Value && (line_sensor_readings.adc_reading[1]>Transition_Value || line_sensor_readings.adc_reading[2]>Transition_Value))
+        //It detects PLUS NODE & Only Left Node
+        left_flag=1;
+        //Leftturn();         
+    }
+    
+    if (left_flag == 1) // checks left first
         {
-            //It detects PLUS NODE & Only Left Node
-            printf("left\n");
-            left_flag_trans=1;
-            //Leftturn();         
+            int counter = 0;
+            while (lsa_reading[0] == 1000 && lsa_reading[1] == 1000)
+            {
+                get_raw_lsa();
+                vTaskDelay(10 / portTICK_PERIOD_MS);
+                counter++;
+                printf("%d\n", counter);
+                if (counter >= 14 && lsa_reading[3] == 1000 && lsa_reading[2] == 1000 && lsa_reading[1] == 1000)
+                {
+                  Leftturn();
+                }
+            }
+            
         }
-     
-    }
     
-    if(left_flag_trans && line_sensor_readings.adc_reading[0]>Transition_Value)
-    {
-      counter++;
-      printf("%d\n", counter);
-    }
-    
-    if(line_sensor_readings.adc_reading[0]<Transition_Value)
-    {
-    
-      counter=0;
-      left_flag_trans=0;
-      printf("%d\n", counter);
-    
-    }
     /*if(counter>=15 && line_sensor_readings.adc_reading[0]>Transition_Value)
     {
       Leftturn();
@@ -286,8 +176,188 @@ void LFR()
       printf("checking is on"); 
       check_only_right();
     }*/
-    previous_sens_readings();
+
     
+    // if(Right_flag)
+#include "mazeblaze2.h"
+#include "tuning_http_server.h"
+#include "driver/gpio.h"
+
+
+float error = 0, prev_error = 0, difference, cumulative_error, correction;
+float left_duty_cycle = 0, right_duty_cycle = 0;
+
+float kp = 35, ki = 0.01, kd = 60;
+
+const int weights[5] = {3, 1, 0, -1, -3};
+
+TaskHandle_t taskhandle1 = NULL;
+
+// MOTOR A0 ---> Right
+// MOTOR A1 ---> Left
+
+/*This method involves tuning kp , ki ,kd physically*/
+#define GOOD_DUTY_CYCLE 80
+#define MIN_DUTY_CYCLE 50
+#define MAX_DUTY_CYCLE 85
+
+#define PWM 80
+/*variables which help to decide which turns to take*/
+
+// all booleans
+bool ll = false;
+
+void calculate_error()
+{
+
+    int all_black_flag = 1; // assuming initially all black condition
+    float weighted_sum = 0, sum = 0;
+    float pos = 0;
+
+    for (int i = 0; i < 5; i++)
+    {
+        if (lsa_reading[i] > BLACK_PATCH)
+        {
+            all_black_flag = 0;
+        }
+        weighted_sum += (float)(weights[i]) * (lsa_reading[i]);
+        sum = sum + lsa_reading[i];
+    }
+
+    if (sum != 0) // sum can never be 0 but just for safety purposes
+    {
+        pos = weighted_sum / sum; // This will give us the position wrt line. if +ve then bot is facing left and if -ve the bot is facing to right.
+    }
+
+    if (all_black_flag == 1) // If all black then we check for previous error to assign current error.
+    {
+        if (prev_error > 0)
+        {
+            error = 3;
+        }
+        else
+        {
+            error = -3;
+        }
+    }
+    else
+    {
+        error = pos;
+    }
+}
+// end of function
+
+void calculate_correction()
+{
+    error = error * 10;              // we need the error correction in range 0-100 so that we can send it directly as duty cycle paramete
+    difference = error - prev_error; // used for calcuating kd
+    cumulative_error += error;       // used for calculating ki
+
+    cumulative_error = bound(cumulative_error, -30, 30);               // bounding cumulative_error to avoid the issue of cumulative_error being very large
+    correction = kp * error + ki * cumulative_error + kd * difference; // defined in http_server.c
+
+    prev_error = error; // update error
+}
+// end of function
+
+float bound(float val, float min, float max) // To bound a certain value in range MAX to MIN
+{
+    if (val > max)
+        val = max;
+    else if (val < min)
+        val = min;
+    return val;
+}
+// end of function
+
+void Leftturn()
+{
+    printf("L T \n");
+    int left = 1;
+
+    while (left)
+    {
+
+        get_raw_lsa();
+        printf("y\n");
+        
+        if (lsa_reading[1] == 0)
+        {
+            ll = true;
+        }
+
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, PWM);
+        set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
+
+        if (lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && ll)
+        {
+            vTaskDelay(40 / portTICK_PERIOD_MS);
+            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+            ll = 0;
+            left = 0;
+            break;
+            printf("E\n");
+        }
+        vTaskDelay(10/portTICK_PERIOD_MS);
+    }
+}
+
+void straight()
+{
+    calculate_error();
+    calculate_correction();
+
+    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+
+    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
+    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+    
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+}
+
+void LFR()
+{
+    //lsa_readings();
+    get_raw_lsa();
+    int left_flag=0;
+    /*if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
+    if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) // LEFT
+    {
+        //It detects PLUS NODE & Only Left Node
+        left_flag=1;
+        //Leftturn();         
+    }
+    
+    if (left_flag == 1) // checks left first
+        {
+            int counter = 0;
+            while (lsa_reading[0] == 1000 && lsa_reading[1] == 1000)
+            {
+                get_raw_lsa();
+                vTaskDelay(10 / portTICK_PERIOD_MS);
+                counter++;
+                printf("%d\n", counter);
+                if (counter >= 14 && lsa_reading[3] == 1000 && lsa_reading[2] == 1000 && lsa_reading[1] == 1000)
+                {
+                  Leftturn();
+                }
+            }
+            
+        }
+    
+    /*if(counter>=15 && line_sensor_readings.adc_reading[0]>Transition_Value)
+    {
+      Leftturn();
+      counter=0;
+    }*/
+ /*   if (Right_flag)
+    { 
+      printf("checking is on"); 
+      check_only_right();
+    }*/
+
     
     // if(Right_flag)
     // {
@@ -313,75 +383,244 @@ void LFR()
 }
 
 
-void line_follow_task(void* arg)
+
+void line_follow_task(void *arg)
 {
-    //bool line_follow_flag = true;
-    ESP_ERROR_CHECK(enable_motor_driver(a, NORMAL_MODE));
-    ESP_ERROR_CHECK(enable_line_sensor());
-    // ESP_ERROR_CHECK(enable_bar_graph());
-// #ifdef CONFIG_ENABLE_OLED
-//     // Initialising the OLED
-//     ESP_ERROR_CHECK(init_oled());
-//     vTaskDelay(100);
 
-//     // Clearing the screen
-//     lv_obj_clean(lv_added LSA readings function before correction function in code.scr_act());
-
-//#endif
-    while(true)
-    {
-        //bool line_follow_flag = true;
-	    // line_sensor_readings = read_line_sensor();
-		// for(int i = 0; i < 5; i++)
-		// {
-		//     line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
-		//     line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
-		//     line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
-		// }
-
-	    /*if(line_follow_flag)
-	    {*/
-		// line_sensor_readings = read_line_sensor();
-		// for(int i = 0; i < 5; i++)
-		// {
-		//     line_sensor_readings.adc_reading[i] = bound(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN);
-		//     line_sensor_readings.adc_reading[i] = map(line_sensor_readings.adc_reading[i], WHITE_MARGIN, BLACK_MARGIN, bound_LSA_LOW, bound_LSA_HIGH);
-		//     line_sensor_readings.adc_reading[i] = 1000 - (line_sensor_readings.adc_reading[i]);
-		// }
-	        lsa_readings();        
-	        LFR();
-	        lsa_readings();
-		calculate_error();
-		calculate_correction();
-		//lsa_to_bar();
-
-		left_duty_cycle = bound((optimum_duty_cycle + correction), lower_duty_cycle, higher_duty_cycle);
-		right_duty_cycle = bound((optimum_duty_cycle - correction), lower_duty_cycle, higher_duty_cycle);
-
-		set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, left_duty_cycle);
-		set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, right_duty_cycle);
-       
-
-		//ESP_LOGI("debug","left_duty_cycle:  %f    ::  right_duty_cycle :  %f  :: error :  %f  correction  :  %f  \n",left_duty_cycle, right_duty_cycle, error, correction);
-		
-	// #ifdef CONFIG_ENABLE_OLED
-	//         // Diplaying kp, ki, kd values on OLED 
-	//         if (read_pid_const().val_changed)
-	//         {
-	//             display_pid_values(read_pid_const().kp, read_pid_const().ki, read_pid_const().kd);
-	//             reset_val_changed_pid_const();
-	//         }
-	// #endif
-
-	vTaskDelay(10 / portTICK_PERIOD_MS);
-	    
-	}    
-
-    vTaskDelete(NULL);
+    while (1)
+    { 
+        LFR();
+        straight();
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
 }
 
 void app_main()
 {
-    xTaskCreate(&line_follow_task, "line_follow_task", 4096, NULL, 1, NULL);
-    start_tuning_http_server();
+    ESP_ERROR_CHECK(enable_lsa());
+    ESP_ERROR_CHECK(enable_motor_driver());
+
+    xTaskCreate(&line_follow_task, "line_follow_task", 4096, NULL, 1, &taskhandle1);
+}#include "mazeblaze2.h"
+#include "tuning_http_server.h"
+#include "driver/gpio.h"
+
+
+float error = 0, prev_error = 0, difference, cumulative_error, correction;
+float left_duty_cycle = 0, right_duty_cycle = 0;
+
+float kp = 35, ki = 0.01, kd = 60;
+
+const int weights[5] = {3, 1, 0, -1, -3};
+
+TaskHandle_t taskhandle1 = NULL;
+
+// MOTOR A0 ---> Right
+// MOTOR A1 ---> Left
+
+/*This method involves tuning kp , ki ,kd physically*/
+#define GOOD_DUTY_CYCLE 80
+#define MIN_DUTY_CYCLE 50
+#define MAX_DUTY_CYCLE 85
+
+#define PWM 80
+/*variables which help to decide which turns to take*/
+
+// all booleans
+bool ll = false;
+
+void calculate_error()
+{
+
+    int all_black_flag = 1; // assuming initially all black condition
+    float weighted_sum = 0, sum = 0;
+    float pos = 0;
+
+    for (int i = 0; i < 5; i++)
+    {
+        if (lsa_reading[i] > BLACK_PATCH)
+        {
+            all_black_flag = 0;
+        }
+        weighted_sum += (float)(weights[i]) * (lsa_reading[i]);
+        sum = sum + lsa_reading[i];
+    }
+
+    if (sum != 0) // sum can never be 0 but just for safety purposes
+    {
+        pos = weighted_sum / sum; // This will give us the position wrt line. if +ve then bot is facing left and if -ve the bot is facing to right.
+    }
+
+    if (all_black_flag == 1) // If all black then we check for previous error to assign current error.
+    {
+        if (prev_error > 0)
+        {
+            error = 3;
+        }
+        else
+        {
+            error = -3;
+        }
+    }
+    else
+    {
+        error = pos;
+    }
+}
+// end of function
+
+void calculate_correction()
+{
+    error = error * 10;              // we need the error correction in range 0-100 so that we can send it directly as duty cycle paramete
+    difference = error - prev_error; // used for calcuating kd
+    cumulative_error += error;       // used for calculating ki
+
+    cumulative_error = bound(cumulative_error, -30, 30);               // bounding cumulative_error to avoid the issue of cumulative_error being very large
+    correction = kp * error + ki * cumulative_error + kd * difference; // defined in http_server.c
+
+    prev_error = error; // update error
+}
+// end of function
+
+float bound(float val, float min, float max) // To bound a certain value in range MAX to MIN
+{
+    if (val > max)
+        val = max;
+    else if (val < min)
+        val = min;
+    return val;
+}
+// end of function
+
+void Leftturn()
+{
+    printf("L T \n");
+    int left = 1;
+
+    while (left)
+    {
+
+        get_raw_lsa();
+        printf("y\n");
+        
+        if (lsa_reading[1] == 0)
+        {
+            ll = true;
+        }
+
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, PWM);
+        set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
+
+        if (lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && ll)
+        {
+            vTaskDelay(40 / portTICK_PERIOD_MS);
+            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+            ll = 0;
+            left = 0;
+            break;
+            printf("E\n");
+        }
+        vTaskDelay(10/portTICK_PERIOD_MS);
+    }
+}
+
+void straight()
+{
+    calculate_error();
+    calculate_correction();
+
+    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+
+    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
+    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+    
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+}
+
+void LFR()
+{
+    //lsa_readings();
+    get_raw_lsa();
+    int left_flag=0;
+    /*if ((prev_readings[0]<Transition_Value && line_sensor_readings.adc_reading[0]>Transition_Value) || (prev_readings[1]>Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value) || (prev_readings[2]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value) || (prev_readings[3]>Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value) || (prev_readings[4]<Transition_Value && line_sensor_readings.adc_reading[4]>Transition_Value)) //checking for transitions (BLACK TO WHITE FOR SENSOR 1&5) (WHITE TO BLACK for sensor 2,3,4)*/
+    if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) // LEFT
+    {
+        //It detects PLUS NODE & Only Left Node
+        left_flag=1;
+        //Leftturn();         
+    }
+    
+    if (left_flag == 1) // checks left first
+        {
+            int counter = 0;
+            while (lsa_reading[0] == 1000 && lsa_reading[1] == 1000)
+            {
+                get_raw_lsa();
+                vTaskDelay(10 / portTICK_PERIOD_MS);
+                counter++;
+                printf("%d\n", counter);
+                if (counter >= 14 && lsa_reading[3] == 1000 && lsa_reading[2] == 1000 && lsa_reading[1] == 1000)
+                {
+                  Leftturn();
+                }
+            }
+            
+        }
+    
+    /*if(counter>=15 && line_sensor_readings.adc_reading[0]>Transition_Value)
+    {
+      Leftturn();
+      counter=0;
+    }*/
+ /*   if (Right_flag)
+    { 
+      printf("checking is on"); 
+      check_only_right();
+    }*/
+
+    
+    // if(Right_flag)
+    // {
+    //     if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]<Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
+    //     {
+    //         //IF ONLY RIGHT NODE IS DETECT
+    //         Rightturn();
+    //         Right_flag= 0;
+    //         printf("turn on");
+
+    //     }
+
+    //     if(line_sensor_readings.adc_reading[0]<Transition_Value && line_sensor_readings.adc_reading[1]>Transition_Value && line_sensor_readings.adc_reading[2]<Transition_Value && line_sensor_readings.adc_reading[3]<Transition_Value && line_sensor_readings.adc_reading[4]<Transition_Value)
+    //     {
+    //         //IF STRAIGHT + RIGHT NODE DETECT THEN SIMPLY Right_flag becomes zero and bot dont take any turn.
+    //         Right_flag=0;
+    //         printf("turn off");
+        
+    //     }
+    
+    // }
+
+}
+
+
+
+void line_follow_task(void *arg)
+{
+
+    while (1)
+    { 
+        LFR();
+        straight();
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
+void app_main()
+{
+    ESP_ERROR_CHECK(enable_lsa());
+    ESP_ERROR_CHECK(enable_motor_driver());
+
+    xTaskCreate(&line_follow_task, "line_follow_task", 4096, NULL, 1, &taskhandle1);
 }
