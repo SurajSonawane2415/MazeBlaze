@@ -4,7 +4,6 @@
 
 float error = 0, prev_error = 0, difference, cumulative_error, correction;
 float left_duty_cycle = 0, right_duty_cycle = 0;
-
 float kp = 35, ki = 0.01, kd = 60;
 
 const int weights[5] = {3, 1, 0, -1, -3};
