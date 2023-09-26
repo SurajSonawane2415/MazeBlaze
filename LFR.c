@@ -4,16 +4,22 @@
 
 float error = 0, prev_error = 0, difference, cumulative_error, correction;
 float left_duty_cycle = 0, right_duty_cycle = 0;
+
 float kp = 35, ki = 0.01, kd = 60;
 
 const int weights[5] = {3, 1, 0, -1, -3};
 
+#define NO_OF_NODES 100
+int store_path[NO_OF_NODES]={1,0};
+int array_index = 1;
+int direction = 1; // 1= North, 2= East, 3= South, 4= West.. assumed bot is moving in a north direction
+int directionflag=0;
 TaskHandle_t taskhandle1 = NULL;
 
 /*This method involves tuning kp , ki ,kd physically*/
-#define GOOD_DUTY_CYCLE 89
-#define MIN_DUTY_CYCLE 59
-#define MAX_DUTY_CYCLE 94
+#define GOOD_DUTY_CYCLE 85
+#define MIN_DUTY_CYCLE 55
+#define MAX_DUTY_CYCLE 90
 
 #define PWM 80
 bool rotation1 = false;
@@ -90,11 +96,40 @@ float bound(float val, float min, float max) // To bound a certain value in rang
 }
 // end of function
 
+
 void Leftturn()
 {
     printf("L T \n");
-    int left = 1;
+    direction = (direction - 1) % 4;
+    if (direction == 0) direction = 4;
+    directionflag = 1;
+    if (directionflag) 
+    {
+        switch (direction) 
+        {
+            case 1:
+                printf("\t North\n");
+                store_path[array_index] = 1;
+                break;
+            case 2:
+                printf("\t East\n");
+                store_path[array_index] = 2;
+                break;
+            case 3:
+                printf("\t South\n");
+                store_path[array_index] = 3;
+                break;
+            case 4:
+                printf("\t West\n");
+                store_path[array_index] = 4;
+                break;
+        }
+    }
+    directionflag=0;
+    array_index++;
 
+    int left = 1;
+    
     while (left)
     {
 
@@ -103,19 +138,20 @@ void Leftturn()
 
         if (lsa_reading[1] == 0)
         {
-            ll = true;
+            rotation1 = true;
         }
 
         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, PWM);
         set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
 
-        if (lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && ll)
+        if (lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && rotation1)
         {
             // ssvTaskDelay(40 / portTICK_PERIOD_MS);
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
             left_tune = 0;
-            ll = 0;
+            rotation1 = 0;
+            rotation2 = 0;
             left = 0;
             left_check = 0;
             right_check = 0;
@@ -130,6 +166,34 @@ void Leftturn()
 
 void Rightturn()
 {
+    direction = (direction - 1) % 4;
+    if (direction == 0) direction = 4;
+    directionflag = 1;
+    if (directionflag) 
+    {
+        switch (direction) 
+        {
+            case 1:
+                printf("\t North\n");
+                store_path[array_index] = 1;
+                break;
+            case 2:
+                printf("\t East\n");
+                store_path[array_index] = 2;
+                break;
+            case 3:
+                printf("\t South\n");
+                store_path[array_index] = 3;
+                break;
+            case 4:
+                printf("\t West\n");
+                store_path[array_index] = 4;
+                break;
+        }
+    }
+    directionflag=0;
+    array_index++;
+
     printf("R T \n");
     int right = 1;
 
@@ -139,7 +203,7 @@ void Rightturn()
 
         if (lsa_reading[3] == 0)
         {
-            rr = true;
+            rotation2 = true;
         }
 
         set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, PWM);
@@ -150,8 +214,8 @@ void Rightturn()
             printf("STOP R T \n");
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+            rotation1 = 0;
             rotation2 = 0;
-            rotation1=0;
             only_right = 0;
             right_tune = 0;
             left_check = 0;
@@ -167,6 +231,35 @@ void Rightturn()
 
 void Uturn()
 {
+    direction = (direction - 2) % 4;
+    if (direction == 0) direction = 4;
+    if (direction == -1) direction = 3;
+    directionflag = 1;
+    if (directionflag) 
+    {
+        switch (direction) 
+        {
+            case 1:
+                printf("\t North\n");
+                store_path[array_index] = 1;
+                break;
+            case 2:
+                printf("\t East\n");
+                store_path[array_index] = 2;
+                break;
+            case 3:
+                printf("\t South\n");
+                store_path[array_index] = 3;
+                break;
+            case 4:
+                printf("\t West\n");
+                store_path[array_index] = 4;
+                break;
+        }
+    }
+    directionflag=0;
+    array_index++;
+    
     while (lsa_reading[2] == 0)
     {
         get_raw_lsa();
@@ -180,7 +273,7 @@ void Uturn()
             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
             printf("U T STOP \n");
             rotation1 = 0;
-            rr=0;
+            rotation2 = 0;
             only_right = 0;
             uturn_tune=0;
 
@@ -218,22 +311,7 @@ void straight_tuning()
     set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
     set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
 
-    vTaskDelay(80 / portTICK_PERIOD_MS);
-}
-
-void errordelay()
-{
-    get_raw_lsa();
-    calculate_error();
-    calculate_correction();
-
-    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-
-    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
-    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
-
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+    vTaskDelay(150 / portTICK_PERIOD_MS);
 }
 
 void check_only_right()
@@ -253,6 +331,35 @@ void check_only_right()
     }
     else if (lsa_reading[2] == 1000 && (lsa_reading[1] == 1000 || lsa_reading[3] == 1000))
     {
+        //STRAIGHT
+        direction = direction;
+        if (direction == 0) direction = 4;
+        if (direction == -1) direction = 3;
+        directionflag = 1;
+        if (directionflag) 
+        {
+            switch (direction) 
+            {
+                case 1:
+                    printf("\t North\n");
+                    store_path[array_index] = 1;
+                    break;
+                case 2:
+                    printf("\t East\n");
+                    store_path[array_index] = 2;
+                    break;
+                case 3:
+                    printf("\t South\n");
+                    store_path[array_index] = 3;
+                    break;
+                case 4:
+                    printf("\t West\n");
+                    store_path[array_index] = 4;
+                    break;
+            }
+        }
+        directionflag=0;
+        array_index++;
         only_right = false;
     }
 }
@@ -384,6 +491,12 @@ void line_follow_task(void *arg)
     {
         LFR();
         straight();
+        printf("The current readings in ARRAY are : ");
+        for (int i = 0; i < array_index; i++)
+        {
+            printf("%d ", store_path[i]);
+        }
+        printf("\n");
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
