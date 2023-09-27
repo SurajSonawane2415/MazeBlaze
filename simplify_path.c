@@ -12,7 +12,7 @@ void main()
    
     int x = 0;
 
-    for (int i = 1; i < 31; i++)
+    for (int i = 1; i < size; i++)
     {
 
 
@@ -46,7 +46,7 @@ void main()
         }
     }
 
-    for(int i =0;i<31;i++){
+    for(int i =0;i<size;i++){
               if(dry_run[i]!=0){
                 final_run[x]=dry_run[i];
                 x ++;
