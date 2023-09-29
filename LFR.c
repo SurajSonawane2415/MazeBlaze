@@ -19,6 +19,9 @@ int counter;
 int f=0;
 TaskHandle_t taskhandle1 = NULL;
 
+#define BOOT_BUTTON     GPIO_NUM_0   //boot button
+int enable_boot=0;
+
 /*This method involves tuning kp , ski ,kd physically*/
 #define GOOD_DUTY_CYCLE 88
 #define MIN_DUTY_CYCLE 58
@@ -411,6 +414,7 @@ void final_right_turn(){
 }
 void simplify_path()
 {   
+    printf("SIMPLIFY PATH");
     int size = sizeof(store_path) / sizeof(store_path[0]);
     int prev_index = 0;
     int prev_value = store_path[prev_index];
@@ -468,12 +472,12 @@ void simplify_path()
 }
 void final_traversal()
 {
-    
+    printf("FINAL TRANSVERSAL");
     simplify_path();
     
     set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
     set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
      
     while(1)
     { 
@@ -548,6 +552,42 @@ void final_traversal()
         
     } 
 }
+//FUNCTION TO RESUME CODE BY USING BOOT BUTTON
+void boot_button()
+{
+
+   while(1)
+   {
+     int boot_button_state = gpio_get_level(BOOT_BUTTON); //1=OPEN 0=CLOSE
+     vTaskDelay(10 / portTICK_PERIOD_MS);
+     if(boot_button_state==1 && enable_boot==1)
+     {
+        set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+        set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+        printf("\n STATE1: %d", boot_button_state);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+     }
+
+     else if(boot_button_state==0)
+     {
+       enable_boot=0;
+     }
+     
+     if(boot_button_state==1 && enable_boot==0)
+     {
+       enable_boot=0;
+       printf("\n STATE2: %d", boot_button_state);
+       vTaskDelay(1000 / portTICK_PERIOD_MS);
+       final_traversal();
+     }
+        // Control the LED based on the button state
+     printf("\n STATE: %d", boot_button_state);
+
+     
+   }
+
+}
+
 void LFR()
 {
     // lsa_readings();
@@ -614,6 +654,7 @@ void LFR()
        get_raw_lsa();
        vTaskDelay(10 / portTICK_PERIOD_MS);
        counter=0;
+       printf("%d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
        while (lsa_reading[0] == 1000 && lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && lsa_reading[3] == 1000 && lsa_reading[4] == 1000)
         {
             get_raw_lsa();
@@ -623,14 +664,16 @@ void LFR()
             printf("%d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
             if (counter >= 20 && lsa_reading[0] == 1000 && lsa_reading[3] == 1000 && lsa_reading[2] == 1000 && lsa_reading[1] == 1000 && lsa_reading[4] == 1000)
                 {
-                    while(1){
-                    set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-                    set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-                    vTaskDelay(10 / portTICK_PERIOD_MS);
-                    counter=0;
-                    printf("counter %d", counter);
-                    printf("STOP");
-                    final_traversal();
+                    while(1)
+                    {
+                        set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+                        set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+                        vTaskDelay(10 / portTICK_PERIOD_MS);
+                        counter=0;
+                        printf("counter %d", counter);
+                        printf("STOP");
+                        enable_boot=1;
+                        boot_button();
                     }
                 }
 
@@ -724,6 +767,15 @@ void line_follow_task(void *arg)
 
 void app_main()
 {
+    // Configuration of boot button    
+    gpio_config_t button_conf;
+    button_conf.pin_bit_mask = (1ULL << BOOT_BUTTON);
+    button_conf.mode = GPIO_MODE_INPUT;
+    button_conf.pull_up_en = GPIO_PULLUP_ENABLE;
+    button_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    button_conf.intr_type = GPIO_INTR_DISABLE;
+    gpio_config(&button_conf);
+
     ESP_ERROR_CHECK(enable_lsa());
     ESP_ERROR_CHECK(enable_motor_driver());
 
