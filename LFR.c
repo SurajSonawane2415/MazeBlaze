@@ -11,7 +11,7 @@ const int weights[5] = {3, 1, 0, -1, -3};
 
 #define NO_OF_NODES 100
 int store_path[NO_OF_NODES]={1,0};
-int final_run[]={};
+int final_run[NO_OF_NODES] = {0};
 int array_index = 1;
 int direction = 1; // 1= North, 2= East, 3= South, 4= West.. assumed bot is moving in a north direction
 int directionflag=0;
@@ -588,29 +588,6 @@ void final_traversal()
 
         }
 
-        /*else if()
-        {   
-            printf("final_right_turn_check\n");
-            if ((final_run[f + 1] - final_run[f]) == -3 || final_run[f + 1] - final_run[f] == 1)
-            {   
-                printf("take_final_right_turn\n");
-                take_final_right_turn=1;
-                f++;
-            }
-            else if ((final_run[f + 1] - final_run[f]) == 0)
-            {
-                printf("take_straight2\n");
-                take_straight=1;
-                f++;
-            }
-            else if (final_run[f + 1] == 0)
-            {   
-                printf("stop2\n");
-                stop=1;
-            }
-
-        }*/
-
         if(take_final_left_turn==1)
         {
             printf("take_final_right_turn2\n");
@@ -707,14 +684,16 @@ void LFR()
 {
     // lsa_readings();
     get_raw_lsa();
- /* left_check = 0;
+    left_check = 0;
     right_check= 0;
     left_turn_check = 0;
     right_turn = 0;
     left_turn=0;
     only_right = 0;
- */
+
     //LEFT
+    printf("1: %d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
+
     if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000))
     {
         // It detects PLUS NODE & Only Left Node
