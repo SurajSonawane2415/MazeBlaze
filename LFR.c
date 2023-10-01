@@ -16,8 +16,21 @@ int array_index = 1;
 int direction = 1; // 1= North, 2= East, 3= South, 4= West.. assumed bot is moving in a north direction
 int directionflag=0;
 int counter;
-int f=0;
+int f=1;
+int show_finalrun=1;
 TaskHandle_t taskhandle1 = NULL;
+
+/*FINAL TURN FLAGS*/
+int left_final_check=0;
+int right_final_check=0;
+int final_left_turn_check=0;
+int final_right_turn_check=0;
+int take_final_right_turn=0;
+int take_final_left_turn=0;
+int take_straight=0;
+int stop=0;
+int x = 0;
+
 
 #define BOOT_BUTTON     GPIO_NUM_0   //boot button
 int enable_boot=0;
@@ -326,6 +339,7 @@ void straight_tuning()
 
 void check_only_right()
 {
+    get_raw_lsa();
     while (lsa_reading[4] == 1000 && lsa_reading[3] == 1000)
     {
         get_raw_lsa();
@@ -394,7 +408,8 @@ void final_left_turn()
     }
 
 }
-void final_right_turn(){
+void final_right_turn()
+{
      right_tune = 1;
         while (right_tune)
         {
@@ -412,13 +427,13 @@ void final_right_turn(){
             }
         }
 }
+
 void simplify_path()
 {   
     printf("SIMPLIFY PATH");
     int size = sizeof(store_path) / sizeof(store_path[0]);
     int prev_index = 0;
     int prev_value = store_path[prev_index];
-    int x = 0;
 
     for (int i = 1; i < size; i++)
     {
@@ -470,83 +485,183 @@ void simplify_path()
         printf("%d ",final_run[i]);
 }
 }
+
 void final_traversal()
 {
     printf("FINAL TRANSVERSAL");
     simplify_path();
-    
+    show_finalrun=1;
     set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
     set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
     vTaskDelay(100 / portTICK_PERIOD_MS);
      
     while(1)
     { 
+
+        if(show_finalrun==1)
+        {
+            printf("Final Run: ");
+            for(int i =0 ;i<x;i++)
+            {
+            printf("%d ",final_run[i]);
+            }
+            show_finalrun=0;
+        }
+
         get_raw_lsa();
-        if (lsa_reading[0] == 1000 && lsa_reading[1] == 1000 && lsa_reading[2] == 1000)
+        //LEFT       
+        if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000))
         {
-            left_check = 1;
+            // It detects PLUS NODE & Only Left Node
+            printf("leftcheck1\n");
+            left_final_check = 1;
         }
-        if (lsa_reading[2] == 1000 && lsa_reading[3] == 1000 && lsa_reading[4] == 1000)
+        // RIGHT   
+        if ((lsa_reading[0] == 0) && (lsa_reading[3] == 1000) && (lsa_reading[2] == 1000) && (lsa_reading[4] == 1000))
         {
-            right_check = 1;
-        }
-        if (left_check == 1 || right_check == 1)
-           {
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-            
-            
-            get_raw_lsa();
-            if (lsa_reading[0] == 1000 && lsa_reading[1] == 1000 && lsa_reading[2] == 1000)
-            {
-                if ((final_run[f + 1] - final_run[f]) == 3 || final_run[f + 1] - final_run[f] == -1)
-                {
-                    final_left_turn();
-                    f++;
-                }
-                else if ((final_run[f + 1] - final_run[f]) == 0)
-                {
-                    straight();
-                    f++;
-                }
-                else if (final_run[f + 1] == 0)
-                {
-                    while (1)
-                    {
-                        set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-                        set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-
-                        vTaskDelay(10 / portTICK_PERIOD_MS);
-                    }
-                }
-            }
-            get_raw_lsa();
-            if (lsa_reading[0] == 0 && lsa_reading[2] == 1000 && lsa_reading[3] == 1000 && lsa_reading[4] == 1000)
-            {
-                if ((final_run[f + 1] - final_run[f]) == -3 || final_run[f + 1] - final_run[f] == 1)
-                {
-                    final_right_turn();
-                    f++;
-                }
-                else if ((final_run[f + 1] - final_run[f]) == 0)
-                {
-                    straight();
-                    f++;
-                }
-                else if (final_run[f + 1] == 0)
-                {
-                    while (1)
-                    {
-                        set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-                        set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-
-                        vTaskDelay(10 / portTICK_PERIOD_MS);
-                    }
-                }
-            }
-            left_check =0;
-            right_check =0;
+            printf("rightcheck1\n");
+            right_final_check = 1;
         }
         
+        if (left_final_check == 1 || right_final_check == 1)
+        {
+            vTaskDelay(10 / portTICK_PERIOD_MS);//delay
+            get_raw_lsa();
+            
+            if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) // checks left first
+            {
+                final_left_turn_check = 1;
+                final_right_turn_check = 0;
+                left_final_check = 0;
+                right_final_check = 0;
+                printf("leftcheck2\n");
+            }
+            else if (lsa_reading[0] == 0 && lsa_reading[3] == 1000 && lsa_reading[2] == 1000 && lsa_reading[4] == 1000)
+            {
+                final_right_turn_check = 1;
+                final_left_turn_check = 0;
+                left_final_check = 0;
+                printf("right_turn\n");
+                right_final_check = 1;
+            }
+            else
+            {
+                left_turn_check = 0;
+                final_right_turn_check = 0;
+                final_left_turn_check = 0;
+                right_final_check = 0;
+                printf("leftcheck1failed\n");
+            }
+        }
+
+        if (final_left_turn_check == 1 || final_right_turn_check == 1)
+        {
+         //printf("%d ",final_run[i]);
+           printf("final_left_right_turn_check\n");
+           printf("\n final:%d:", final_run[f] );
+           printf("\n final-1:%d:", final_run[f-1]);
+           printf("\n f=%d", f);
+           
+           if (final_run[f] == 0)
+            {
+              printf("stop\n");
+              stop=1;
+            }
+            else if ((final_run[f] - final_run[f - 1] == -1) || (final_run[f] - final_run[f - 1] == 3)) //LEFT
+            {
+                printf("take_final_left_turn\n");
+                take_final_left_turn=1;
+                f++;
+            }
+            else if ((final_run[f] - final_run[f - 1] == 1) || (final_run[f] - final_run[f - 1] == -3)) //RIGHT
+            {
+                printf("take_final_right_turn\n");
+                take_final_right_turn=1;
+                f++;
+            }
+            else if (final_run[f] - final_run[f - 1] == 0) //STRAIGHT
+            {
+                printf("take_straight2\n");
+                take_straight=1;
+                f++;
+            } 
+
+        }
+
+        /*else if()
+        {   
+            printf("final_right_turn_check\n");
+            if ((final_run[f + 1] - final_run[f]) == -3 || final_run[f + 1] - final_run[f] == 1)
+            {   
+                printf("take_final_right_turn\n");
+                take_final_right_turn=1;
+                f++;
+            }
+            else if ((final_run[f + 1] - final_run[f]) == 0)
+            {
+                printf("take_straight2\n");
+                take_straight=1;
+                f++;
+            }
+            else if (final_run[f + 1] == 0)
+            {   
+                printf("stop2\n");
+                stop=1;
+            }
+
+        }*/
+
+        if(take_final_left_turn==1)
+        {
+            printf("take_final_right_turn2\n");
+            left_final_check=0;
+            right_final_check=0;
+            final_left_turn_check=0;
+            final_right_turn_check=0;
+            take_final_right_turn=0;
+            take_final_left_turn=0;
+            take_straight=0;
+            stop=0; 
+            final_left_turn();
+        }
+        else if(take_final_right_turn==1)
+        {
+            printf("take_final_left_turn2\n");
+            left_final_check=0;
+            right_final_check=0;
+            final_left_turn_check=0;
+            final_right_turn_check=0;
+            take_final_right_turn=0;
+            take_final_left_turn=0;
+            take_straight=0;
+            stop=0; 
+            final_right_turn();
+        }
+        else if(take_straight==1)
+        {
+            printf("take_straight_final\n");
+            left_final_check=0;
+            right_final_check=0;
+            final_left_turn_check=0;
+            final_right_turn_check=0;
+            take_final_right_turn=0;
+            take_final_left_turn=0;
+            take_straight=0;
+            stop=0; 
+            straight_tuning();
+        }
+        
+        else if (stop==1)
+        {
+          printf("take_stop_final\n");
+          while (1)
+            {
+                set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+                set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+
+                vTaskDelay(10 / portTICK_PERIOD_MS);
+            }
+        }    
         straight();
 
         
@@ -592,12 +707,13 @@ void LFR()
 {
     // lsa_readings();
     get_raw_lsa();
-    left_check = 0;
+ /* left_check = 0;
     right_check= 0;
     left_turn_check = 0;
     right_turn = 0;
     left_turn=0;
     only_right = 0;
+ */
     //LEFT
     if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000))
     {
@@ -641,50 +757,49 @@ void LFR()
             printf("leftcheck1failed\n");
         }
     }
-
-    if (right_turn)
-    {
-        printf("check only right\n");
-        check_only_right();
-    }
     
     
     if (left_turn_check)
     { 
-       get_raw_lsa();
        vTaskDelay(10 / portTICK_PERIOD_MS);
+       get_raw_lsa();
        counter=0;
        printf("%d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
-       while (lsa_reading[0] == 1000 && lsa_reading[1] == 1000 && lsa_reading[2] == 1000 && lsa_reading[3] == 1000 && lsa_reading[4] == 1000)
+       while (lsa_reading[0] == 1000 && lsa_reading[1] == 1000)
         {
             get_raw_lsa();
             counter++;
             vTaskDelay(10 / portTICK_PERIOD_MS);
             printf("\n counter %d", counter);
             printf("%d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
-            if (counter >= 20 && lsa_reading[0] == 1000 && lsa_reading[3] == 1000 && lsa_reading[2] == 1000 && lsa_reading[1] == 1000 && lsa_reading[4] == 1000)
+            if (counter >= 20 && lsa_reading[0] == 1000 && lsa_reading[2] == 1000 && lsa_reading[4] == 1000)
+            {
+                while(1)
                 {
-                    while(1)
-                    {
-                        set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
-                        set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
-                        vTaskDelay(10 / portTICK_PERIOD_MS);
-                        counter=0;
-                        printf("counter %d", counter);
-                        printf("STOP");
-                        enable_boot=1;
-                        boot_button();
-                    }
+                    set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+                    set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
+                    counter=0;
+                    printf("counter %d", counter);
+                    printf("STOP");
+                    enable_boot=1;
+                    boot_button();
                 }
+            }
 
         }
+        printf("left turn flag on");
         left_turn=1;
 
     }
-
-    get_raw_lsa();
     
-    if (left_turn)
+    if (right_turn)
+    {
+        printf("check only right\n");
+        check_only_right();
+    }
+    
+    else if (left_turn)
     {
         left_tune = 1;
         while (left_tune)
@@ -704,8 +819,9 @@ void LFR()
             }
         }
     }
-
-    else if ((only_right == 1) && (right_turn == 1))
+    
+    get_raw_lsa();
+    if ((only_right == 1) && (right_turn == 1))
     {
         right_tune = 1;
         while (right_tune)
