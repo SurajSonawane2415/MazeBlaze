@@ -74,3 +74,44 @@ When the robot moves and follows these rules, it records its current direction i
 
 ### Description Of Functions Used
 
+Certainly, I'll format the descriptions using the format you provided:
+
+1. 
+```c
+void LFR()
+```
+   - This function helps the robot explore a maze by following the Left Follow Rule. It detects nodes by using LSA sensor(Line Sensor Array) and take turns according to the type of node.
+
+2. 
+```c
+void Leftturn()
+```
+   - The `Leftturn()` function directs the robot to make left turns based on specific left-turn rules, aiding in precise maze navigation.
+
+3. 
+```c
+void Rightturn()
+```
+   - The `Rightturn()` function provides the robot with guidance for executing right turns when necessary, ensuring that it adheres to predefined instructions and maintains correct navigation.
+
+4. 
+```c
+void Uturn()
+```
+   - The `Uturn()` function instructs the robot to perform a U-turn, a complete 180-degree reversal, allowing the robot to head in the opposite direction.
+
+5. 
+```c
+void simplify_path()
+```
+   - The `simplify_path()` function streamlines the recorded path within the `store_path` array. Redundant steps are removed, and the shortest path is stored in the `final_run` array, optimizing the robot's maze traversal.
+
+6. 
+```c
+void final_maze_solving()
+```
+   - The `final_maze_solving()` function manages the actual maze-solving process. It guides the robot to follow the simplified path stored in the `final_run` array, ensuring efficient navigation and the avoidance of unnecessary movements while reaching the destination.
+
+### Error Descriptions and Solution
+Description: 
+Solution:
