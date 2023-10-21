@@ -86,25 +86,25 @@ void LFR()
 ```c
 void Leftturn()
 ```
-   - The `Leftturn()` function directs the robot to make left turns based on specific left-turn rules, aiding in precise maze navigation.
+   - Description: This function tells the bot to turn left by following specific rules for accurate navigation.
 
 3. 
 ```c
 void Rightturn()
 ```
-   - The `Rightturn()` function provides the robot with guidance for executing right turns when necessary, ensuring that it adheres to predefined instructions and maintains correct navigation.
+   - Description: This function function tells the bot to turn right by following specific rules for accurate navigation.
 
 4. 
 ```c
 void Uturn()
 ```
-   - The `Uturn()` function instructs the robot to perform a U-turn, a complete 180-degree reversal, allowing the robot to head in the opposite direction.
+   - Description: This function tells the bot to make a U-turn, which means turning around completely to go in the opposite direction, following specific navigation rules.
 
 5. 
 ```c
 void simplify_path()
 ```
-   - The `simplify_path()` function streamlines the recorded path within the `store_path` array. Redundant steps are removed, and the shortest path is stored in the `final_run` array, optimizing the robot's maze traversal.
+   - Removes all the redundancies from store_path[] and stores the shortest path in another array called final_run[].
 
 6. 
 ```c
