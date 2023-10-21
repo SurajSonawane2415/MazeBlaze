@@ -113,5 +113,18 @@ void final_maze_solving()
    - The `final_maze_solving()` function manages the actual maze-solving process. It guides the robot to follow the simplified path stored in the `final_run` array, ensuring efficient navigation and the avoidance of unnecessary movements while reaching the destination.
 
 ### Error Descriptions and Solution
-Description: 
-Solution:
+**1: No Turn Detection**
+- **Description:** The robot didn't detect turns initially because the turning power (PWM) was set too low at 40. It started detecting turns when the turning power was increased to 70, which is the minimum needed (50).
+- **Solution:** To fix this, we raised the turning power (PWM) to 70 to make sure the robot detects and takes turns correctly.
+
+**2: Task Watchdog Triggered**
+- **Description:** An error message, "Task watchdog got triggered," appeared. To resolve it, we needed to add a pause (delay) after a particular function.
+- **Solution:** We fixed the error by introducing a short delay after the specific function to ensure everything runs smoothly.
+
+**3: Continuous Turns**
+- **Description:** The robot kept turning nonstop, even when it met the conditions to stop. This happened because we had while loops for turns, which depended on LSA sensor conditions.
+- **Solution:** We solved this issue by adding a function called `get_lsa_readings()` to update LSA sensor readings, making sure the robot detects turns accurately and stops turning when required.
+
+**4: False Node Detection**
+- **Description:** The robot mistakenly detected nodes on straight paths. We improved this by adjusting PID settings and adding flags to differentiate between nodes and straight paths.
+- **Solution:** To correct this, we fine-tuned the PID settings and used flags to distinguish between actual nodes and straight paths, preventing incorrect node detections.
