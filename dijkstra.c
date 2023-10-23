@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INFINITY 99999999999999
+#define INFINITY 999
 #define INDEX_MAX_SIZE 50
 
 //VISITED AND PARRENT MATRIX IS USE WITHOUT PATH MATRIX
