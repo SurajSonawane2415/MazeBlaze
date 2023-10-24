@@ -1,0 +1,21 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "/home/purva/esp/esp-idf/components/bootloader/subproject",
+    "build_dir":          "/home/purva/MazeBlaze/1_ledblink/build/bootloader",
+    "config_file":        "/home/purva/MazeBlaze/1_ledblink/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "v4.4.3",
+    "target":             "esp32",
+    "rev":                "0",
+    "phy_data_partition": "",
+    "monitor_baud" :      "115200",
+    "monitor_toolprefix": "xtensa-esp32-elf-",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "/home/purva/esp/esp-idf/components/efuse/Kconfig;/home/purva/esp/esp-idf/components/esp32/Kconfig;/home/purva/esp/esp-idf/components/esp_common/Kconfig;/home/purva/esp/esp-idf/components/esp_hw_support/Kconfig;/home/purva/esp/esp-idf/components/esp_system/Kconfig;/home/purva/esp/esp-idf/components/freertos/Kconfig;/home/purva/esp/esp-idf/components/hal/Kconfig;/home/purva/esp/esp-idf/components/log/Kconfig;/home/purva/esp/esp-idf/components/newlib/Kconfig;/home/purva/esp/esp-idf/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "/home/purva/esp/esp-idf/components/bootloader/Kconfig.projbuild;/home/purva/esp/esp-idf/components/esp_rom/Kconfig.projbuild;/home/purva/esp/esp-idf/components/esptool_py/Kconfig.projbuild;/home/purva/esp/esp-idf/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32", "esp_common", "esp_hw_support", "esp_rom", "esp_system", "esptool_py", "freertos", "hal", "log", "main", "micro-ecc", "newlib", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "/home/purva/esp/esp-idf/components/bootloader", "/home/purva/esp/esp-idf/components/bootloader_support", "/home/purva/esp/esp-idf/components/efuse", "/home/purva/esp/esp-idf/components/esp32", "/home/purva/esp/esp-idf/components/esp_common", "/home/purva/esp/esp-idf/components/esp_hw_support", "/home/purva/esp/esp-idf/components/esp_rom", "/home/purva/esp/esp-idf/components/esp_system", "/home/purva/esp/esp-idf/components/esptool_py", "/home/purva/esp/esp-idf/components/freertos", "/home/purva/esp/esp-idf/components/hal", "/home/purva/esp/esp-idf/components/log", "/home/purva/esp/esp-idf/components/bootloader/subproject/main", "/home/purva/esp/esp-idf/components/bootloader/subproject/components/micro-ecc", "/home/purva/esp/esp-idf/components/newlib", "/home/purva/esp/esp-idf/components/partition_table", "/home/purva/esp/esp-idf/components/soc", "/home/purva/esp/esp-idf/components/spi_flash", "/home/purva/esp/esp-idf/components/xtensa", "" ]
+}
