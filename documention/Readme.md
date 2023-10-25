@@ -1,6 +1,17 @@
 # MazeBlaze-v3.1
-## Left Follow Rule (LFR)
-### Theory
+
+# TABLE OF CONTENTS
+- [Left Follow Rule](#left-follow-rule-lfr)
+  - [Theory](#theory)
+  - [Implementation](#implementation)
+  - [Description Of Functions Used](#description-of-functions-used)
+  - [Error Descriptions and Solution](#error-descriptions-and-solution)
+
+- [Printed Circuit Board (PCB)](#printed-circuit-board-(pcb))
+
+
+# Left Follow Rule (LFR)
+## Theory
 The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze solving technique used to navigate through 2D mazes. To use LFR, you start at the entrance of a maze with your left hand touching the wall to your left. As you navigate through the maze, you follow a set of rules:
 
 1. **Always turn left:** Whenever you reach an intersection or have a choice of paths, you make a left turn if it's possible, keeping your left hand on the wall.
@@ -11,7 +22,7 @@ The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze s
 
 4. **Reverse when there are no other options:** If you find yourself in a situation where you can't turn left, go straight, or turn right, it means you've likely reached a dead end. In this case, you need to turn around and backtrack.
 
-### Implementation
+## Implementation
 
 The Left Follow algorithm is a method for navigating and tracking the movement of a bot as it encounters and traverses various paths. This algorithm records the bot's movements by assigning numeric values to different directions and then tracking these values in an array named `store_path`. The directions are indexed as follows:
 
@@ -72,7 +83,7 @@ The program is designed to keep track of the serial numbers (direction indices) 
 
 When the robot moves and follows these rules, it records its current direction in the store_path array. This helps us keep track of where the robot has been. The robot always knows which direction it's facing, even if it takes many turns.
 
-### Description Of Functions Used
+## Description Of Functions Used
 
 Certainly, I'll format the descriptions using the format you provided:
 
@@ -112,7 +123,7 @@ void final_maze_solving()
 ```
    - The `final_maze_solving()` function manages the actual maze-solving process. It guides the robot to follow the simplified path stored in the `final_run` array, ensuring efficient navigation and the avoidance of unnecessary movements while reaching the destination.
 
-### Error Descriptions and Solution
+## Error Descriptions and Solution
 **1: No Turn Detection**
 - **Description:** The robot didn't detect turns initially because the turning power (PWM) was set too low at 40. It started detecting turns when the turning power was increased to 70, which is the minimum needed (50).
 - **Solution:** To fix this, we raised the turning power (PWM) to 70 to make sure the robot detects and takes turns correctly.
