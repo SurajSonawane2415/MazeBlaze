@@ -85,37 +85,35 @@ When the robot moves and follows these rules, it records its current direction i
 
 ## Description Of Functions Used
 
-Certainly, I'll format the descriptions using the format you provided:
-
 1. 
 ```c
 void LFR()
 ```
-   - This function helps the robot explore a maze by following the Left Follow Rule. It detects nodes by using LSA sensor(Line Sensor Array) and take turns according to the type of node.
+   - **Description:** This function helps the robot explore a maze by following the Left Follow Rule. It detects nodes by using LSA sensor(Line Sensor Array) and take turns according to the type of node.
 
 2. 
 ```c
 void Leftturn()
 ```
-   - Description: This function tells the bot to turn left by following specific rules for accurate navigation.
+   - **Description:** This function tells the bot to turn left by following specific rules for accurate navigation.
 
 3. 
 ```c
 void Rightturn()
 ```
-   - Description: This function function tells the bot to turn right by following specific rules for accurate navigation.
+   - **Description:** This function function tells the bot to turn right by following specific rules for accurate navigation.
 
 4. 
 ```c
 void Uturn()
 ```
-   - Description: This function tells the bot to make a U-turn, which means turning around completely to go in the opposite direction, following specific navigation rules.
+   - **Description:** This function tells the bot to make a U-turn, which means turning around completely to go in the opposite direction, following specific navigation rules.
 
 5. 
 ```c
 void simplify_path()
 ```
-   - Removes all the redundancies from store_path[] and stores the shortest path in another array called final_run[].
+   - **Description:** Removes all the redundancies from store_path[] and stores the shortest path in another array called final_run[].
 
 6. 
 ```c
@@ -125,6 +123,7 @@ void final_maze_solving()
 
 ## Error Descriptions and Solution
 **1: Task Watchdog Triggered**
+![Screenshot 2023-10-27 002829](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/81be0992-ee0b-4599-9c4a-1d6c37175717)
 - **Description:** In the above screenshot, an error message, "Task watchdog got triggered," appeared when we flashed our code on the ESP. 
 - **Solution:** we found it necessary to add a delay so we resolved this error by adding a 10ms delay, as follows:
 ```c
@@ -140,17 +139,50 @@ set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
 
 vTaskDelay(10 / portTICK_PERIOD_MS); //Delay
 ```
-
-
     
-**2: No Turn Detection**
-- **Description:** The bot didn't detect turns initially because the turning power (PWM) was set too low at 40. It started detecting turns when the turning power was increased to 70, which is the minimum needed (50).
-- **Solution:** To fix this, we raised the turning power (PWM) to 70 to make sure the robot detects and takes turns correctly.
+**2:  Unable to turn after detecting a node**
+- **Description:** When bot detects the node after that bot didn't taking turn. This error was ocuure because the bot's PWM for turn was 40, which was insufficient to turn, pwm should be grater than 55 for our case. Because when the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
+- **Solution:** We solved the error by increasing the PWM (Pulse Width Modulation) value from 40 to 70 in the motor control configuration, as shown in the following snippet of code: 
 
-**3: Continuous Turns**
-- **Description:** The robot kept turning nonstop, even when it met the conditions to stop. This happened because we had while loops for turns, which depended on LSA sensor conditions.
-- **Solution:** We solved this issue by adding a function called `get_lsa_readings()` to update LSA sensor readings, making sure the robot detects turns accurately and stops turning when required.
+ ```c
+   #define PWM 85
+
+   void Leftturn() 
+   {
+     set_motor_speed(MOTOR_A_0, MOTOR_FORWARD, PWM);
+     set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
+     vTaskDelay(10 / portTICK_PERIOD_MS);
+   }
+ ```
+This PWM adjustment provided the necessary power to the motors,   enable to turns correctly after node detection. 
+
+**3: Bot Keeps Turning, Doesn't Stop**
+- **Description:**  When the bot detected a node and starts turning, we added a condition to stop turning when the Line Following Sensor Array (LSA) readings turned white. The error occurred because the turning function was placed within a while loop, and causing the LSA sensor readings to not update as expected. Because of this, the condition is not gets satisfied to stop turning.
+
+- **Solution:** To solv this, we added a function called get_raw_lsa() to update the LSA sensor readings. as shown in the following snippet of code:  
+```c
+   Leftturn(){
+      while(stop)
+      {
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, PWM);
+        set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
+
+        if (lsa_reading[2] == 1000) //1000=White
+        {
+            set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
+            set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
+            vTaskDelay(20 / portTICK_PERIOD_MS);
+            stop=0;
+            break;
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+      }  
+       }
+```
+   With this change, the condition was satisfied, allowing the bot to stop turning correctly when LSA readings become white. 
 
 **4: False Node Detection**
 - **Description:** The robot mistakenly detected nodes on straight paths. We improved this by adjusting PID settings and adding flags to differentiate between nodes and straight paths.
 - **Solution:** To correct this, we fine-tuned the PID settings and used flags to distinguish between actual nodes and straight paths, preventing incorrect node detections.
+
+
