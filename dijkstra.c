@@ -20,9 +20,9 @@ TaskHandle_t taskhandle1 = NULL;
 #define V 48
 
 /*This method involves tuning kp , ski ,kd physically*/
-#define GOOD_DUTY_CYCLE 20
-#define MIN_DUTY_CYCLE 20
-#define MAX_DUTY_CYCLE 20
+#define GOOD_DUTY_CYCLE 91
+#define MIN_DUTY_CYCLE 61
+#define MAX_DUTY_CYCLE 86
 int path_length = 0;
 int enable_path_matrix=1;
 int stop_path_matrix=1;
@@ -49,7 +49,7 @@ int uturn_tune = 0;
 int right_tune = 0;
 int Check_End=0;
 
-#define PWM 20
+#define PWM 85
 int rotation1 = 0;
 bool rotation2 = false;
 
