@@ -113,13 +113,26 @@ void final_maze_solving()
    - The `final_maze_solving()` function manages the actual maze-solving process. It guides the robot to follow the simplified path stored in the `final_run` array, ensuring efficient navigation and the avoidance of unnecessary movements while reaching the destination.
 
 ### Error Descriptions and Solution
-**1: No Turn Detection**
+
+**1: Task Watchdog Triggered**
+- **Description:** In the above image, the "Task watchdog got triggered" error message appeared when we flashed our code on the ESP. This error occurs due to the watchdog mechanism in the system(esp). The watchdog is like a timer that ensures tasks complete within their expected time. If a task takes too long to execute, it suggests that there might be a problem with task timing or efficiency. This can lead to system instability as tasks might not run as intended. The error was coming because a specific task in our code was exceeding its expected execution time, causing the watchdog to step in. & we getting error 'Task watchdog got triggered'.
+- **Solution:** To fix this, we added a short 10-millisecond delay (vTaskDelay(10 / portTICK_PERIOD_MS)) after a particular function in our code. This simple pause allowed the task to finish in the expected time, preventing the watchdog from triggering and making sure our system runs smoothly. You can find the exact code snippet below:
+```c
+get_raw_lsa();
+calculate_error();
+calculate_correction();
+
+left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+
+set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /* goes forward in this case */
+set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+
+vTaskDelay(10 / portTICK_PERIOD_MS);//Delay
+```
+**1: Bot is not taking turn after node detection**
 - **Description:** The robot didn't detect turns initially because the turning power (PWM) was set too low at 40. It started detecting turns when the turning power was increased to 70, which is the minimum needed (50).
 - **Solution:** To fix this, we raised the turning power (PWM) to 70 to make sure the robot detects and takes turns correctly.
-
-**2: Task Watchdog Triggered**
-- **Description:** An error message, "Task watchdog got triggered," appeared. To resolve it, we needed to add a pause (delay) after a particular function.
-- **Solution:** We fixed the error by introducing a short delay after the specific function to ensure everything runs smoothly.
 
 **3: Continuous Turns**
 - **Description:** The robot kept turning nonstop, even when it met the conditions to stop. This happened because we had while loops for turns, which depended on LSA sensor conditions.
