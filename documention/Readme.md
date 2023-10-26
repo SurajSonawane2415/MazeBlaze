@@ -124,13 +124,28 @@ void final_maze_solving()
    - The `final_maze_solving()` function manages the actual maze-solving process. It guides the robot to follow the simplified path stored in the `final_run` array, ensuring efficient navigation and the avoidance of unnecessary movements while reaching the destination.
 
 ## Error Descriptions and Solution
-**1: No Turn Detection**
-- **Description:** The robot didn't detect turns initially because the turning power (PWM) was set too low at 40. It started detecting turns when the turning power was increased to 70, which is the minimum needed (50).
-- **Solution:** To fix this, we raised the turning power (PWM) to 70 to make sure the robot detects and takes turns correctly.
+**1: Task Watchdog Triggered**
+- **Description:** In the above screenshot, an error message, "Task watchdog got triggered," appeared when we flashed our code on the ESP. 
+- **Solution:** we found it necessary to add a delay so we resolved this error by adding a 10ms delay, as follows:
+```c
+get_raw_lsa();
+calculate_error();
+calculate_correction();
 
-**2: Task Watchdog Triggered**
-- **Description:** An error message, "Task watchdog got triggered," appeared. To resolve it, we needed to add a pause (delay) after a particular function.
-- **Solution:** We fixed the error by introducing a short delay after the specific function to ensure everything runs smoothly.
+left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+
+set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /* goes forward in this case */
+set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+
+vTaskDelay(10 / portTICK_PERIOD_MS); //Delay
+```
+
+
+    
+**2: No Turn Detection**
+- **Description:** The bot didn't detect turns initially because the turning power (PWM) was set too low at 40. It started detecting turns when the turning power was increased to 70, which is the minimum needed (50).
+- **Solution:** To fix this, we raised the turning power (PWM) to 70 to make sure the robot detects and takes turns correctly.
 
 **3: Continuous Turns**
 - **Description:** The robot kept turning nonstop, even when it met the conditions to stop. This happened because we had while loops for turns, which depended on LSA sensor conditions.
