@@ -164,6 +164,7 @@ This PWM adjustment provided the necessary power to the motors,   enable to turn
    Leftturn(){
       while(stop)
       {
+        get_raw_lsa();//function to update lsa readings
         set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, PWM);
         set_motor_speed(MOTOR_A_1, MOTOR_BACKWARD, PWM);
 
@@ -181,8 +182,34 @@ This PWM adjustment provided the necessary power to the motors,   enable to turn
 ```
    With this change, the condition was satisfied, allowing the bot to stop turning correctly when LSA readings become white. 
 
-**4: False Node Detection**
-- **Description:** The robot mistakenly detected nodes on straight paths. We improved this by adjusting PID settings and adding flags to differentiate between nodes and straight paths.
-- **Solution:** To correct this, we fine-tuned the PID settings and used flags to distinguish between actual nodes and straight paths, preventing incorrect node detections.
+**4: Node Misidentification**
 
+- **Description:** The bot mistakenly identified nodes on straight paths.
+
+- **Solution:** To solve this, we performed PID tuning and added flags to check for nodes. When the left or right line sensors detect a white surface (e.g., 1000), a "check-flag" is set to true (1). This flag rechecks the condition for nodes, and if it is false, no turn will be taken. As shown in the following snippet of code: 
+```c
+get_raw_lsa();
+left_check = 0;
+if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) //Left sensor=> lsa_reading[0]
+{
+    // It detects PLUS NODE & Only Left Node
+    printf("leftcheck1\n");
+    left_check = 1;
+}
+
+if (left_check == 1 )
+{
+    vTaskDelay(40 / portTICK_PERIOD_MS); // delay
+    get_raw_lsa();
+
+    if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) // check detected node is node or not.
+    {
+        left_turn = 1;
+    }
+    else
+    {
+        left_check = 0;
+    }
+}
+```
 
