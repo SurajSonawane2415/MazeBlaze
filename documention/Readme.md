@@ -162,7 +162,8 @@ vTaskDelay(10 / portTICK_PERIOD_MS); //Delay
 This PWM adjustment provided the necessary power to the motors,   enable to turns correctly after node detection. 
 
 **3: Bot Keeps Turning, Doesn't Stop**
-- **Description:**  When the bot detected a node and starts turning, we added a condition to stop turning when the Line Following Sensor Array (LSA) readings turned white. The error occurred because the turning function was placed within a while loop, and causing the LSA sensor readings to not update as expected. Because of this, the condition is not gets satisfied to stop turning.
+- **Description:**  When the bot detected a node and starts turning, we added a condition to stop turning when the Line Following Sensor Array (LSA) readings turned white. The error occurred because the turning function was placed within a while loop, and causing the LSA sensor readings to not update as expected. Because of this, the condition is not gets satisfied to stop turning. Because of this bot contnuosly starts taking taking turn, as shown below:
+![5-Sep-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/ee23dd8d-a288-46ea-8a92-69dfacfa61a0)
 
 - **Solution:** To solv this, we added a function called get_raw_lsa() to update the LSA sensor readings. as shown in the following snippet of code:  
 ```c
@@ -229,10 +230,11 @@ You can see this change in action in the video below:
 # Printed Circuit Board (PCB) design
 ## Board images: 
 - Front side:
-  ![Screenshot 2023-10-27 154636](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/fcb0a584-4c09-48da-b8a1-d6507c664477)
+![Screenshot 2023-10-27 172828](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/dcec1c55-7f01-4440-8fc9-856f8971ced0)
 
 - Back side:
-  ![Screenshot 2023-10-27 154750](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/1be2c3cb-fc74-4689-a7d8-3b263dc5e63a)
+![Screenshot 2023-10-27 173618](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/652db1fd-b264-4410-975c-1a318c16de0d)
+
 
 - Pinout:
 
