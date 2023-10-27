@@ -212,4 +212,9 @@ if (left_check == 1 )
     }
 }
 ```
+**5: Issue with the Final Run**
 
+- **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detected a node and according to the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only a 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. But bot can follow only one direction per node to complete final run successfully. So, because of this bot is not able to complete the final run and final run gets destroy. You can see this issue in the following video:
+- **Solution:** To fix this problem, we made a change in the code. We set a condition that makes the bot keep moving straight until the entire node is end (either the left or right sensor sees a white surface), which marks the end of a node. With this adjustment, the bot now moves straight through the entire node without detecting multiple nodes. This allowed it to complete the final run without any issues. As shown in the following snippet of code:
+
+You can see this change in action in the video below:
