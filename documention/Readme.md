@@ -7,7 +7,12 @@
   - [Description Of Functions Used](#description-of-functions-used)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
 
-- [Printed Circuit Board (PCB)](#printed-circuit-board-(pcb))
+- [Dijkstra's algorithm](#dijkstra's-algorithm)
+- [Printed Circuit Board Design](#printed-circuit-board-design)
+  - [Board Images](#board-images)
+  - [Getting Started with a Mazeblaze V3 Board](#getting-started-with-a-mazeblaze-board)
+  - [Major Changes for Mazeblaze V3 Board](#major-changes-for-mazeblaze-v3-board)
+
 
 
 # Left Follow Rule (LFR)
@@ -218,3 +223,15 @@ if (left_check == 1 )
 - **Solution:** To fix this problem, we made a change in the code. We set a condition that makes the bot keep moving straight until the entire node is end (either the left or right sensor sees a white surface), which marks the end of a node. With this adjustment, the bot now moves straight through the entire node without detecting multiple nodes. This allowed it to complete the final run without any issues. As shown in the following snippet of code:
 
 You can see this change in action in the video below:
+
+# Dijkstra's algorithm
+
+# Printed Circuit Board (PCB) design
+## Board images: 
+- Front side:
+- Back side:
+- Pinout:
+
+## Getting Started with a Mazeblaze Board
+
+## Major Changes for Mazeblaze V3 Board
