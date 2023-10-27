@@ -229,7 +229,11 @@ You can see this change in action in the video below:
 # Printed Circuit Board (PCB) design
 ## Board images: 
 - Front side:
+  ![Screenshot 2023-10-27 154636](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/fcb0a584-4c09-48da-b8a1-d6507c664477)
+
 - Back side:
+  ![Screenshot 2023-10-27 154750](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/1be2c3cb-fc74-4689-a7d8-3b263dc5e63a)
+
 - Pinout:
 
 ## Getting Started with a Mazeblaze Board
