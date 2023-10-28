@@ -221,10 +221,31 @@ if (left_check == 1 )
 **5: Issue with the Final Run**
 
 - **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detected a node and according to the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only a 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. But bot can follow only one direction per node to complete final run successfully. So, because of this bot is not able to complete the final run and final run gets destroy. You can see this issue in the following video:
+  ![WhatsApp Video 2023-10-28 at 03 53 01_90976d8f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/b31edc9b-3752-4192-852c-722c57c23473)
 - **Solution:** To fix this problem, we made a change in the code. We set a condition that makes the bot keep moving straight until the entire node is end (either the left or right sensor sees a white surface), which marks the end of a node. With this adjustment, the bot now moves straight through the entire node without detecting multiple nodes. This allowed it to complete the final run without any issues. As shown in the following snippet of code:
-
+```c
+void final_straight()
+{
+    get_raw_lsa();
+    while (lsa_reading[0] == 1000 || lsa_reading[4] == 1000) //Left sensor==>0 Right sensor ==>4 WHITE=1000
+    {
+        get_raw_lsa();
+        calculate_error();
+        calculate_correction();
+    
+        left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+        right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+    
+        set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+    
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    } 
+}
+```
 You can see this change in action in the video below:
 
+![WhatsApp Video 2023-10-28 at 04 04 37_c621a96f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/45dbe1d9-1780-4b4f-a9ab-4ff0af11b0dc)
 # Dijkstra's algorithm
 
 # Printed Circuit Board (PCB) design
