@@ -358,20 +358,21 @@ void final_straight_tune()
 
 void final_straight()
 {
-   for (int k=0; k<24; k++)
-   {
     get_raw_lsa();
-    calculate_error();
-    calculate_correction();
-
-    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-
-    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
-    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
-    printf("FINAL STRAIGHT");
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-   }
+    while (lsa_reading[0] == 1000 || lsa_reading[4] == 1000) //Left sensor==>0 Right sensor ==>4 WHITE=1000
+    {
+        get_raw_lsa();
+        calculate_error();
+        calculate_correction();
+    
+        left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+        right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+    
+        set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+    
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    } 
    left_final_check=0;
    right_final_check=0;
    final_left_turn_check=0;
