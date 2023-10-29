@@ -150,6 +150,8 @@ This allowed the task to complete within its designated time frame, preventing t
 
 **2:  Unable to turn after detecting a node**
 - **Description:** When bot detects the node after that bot didn't taking turn. This error was ocuure because the bot's PWM for turn was 40, which was insufficient to turn, pwm should be grater than 55 for our case. Because when the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
+
+![nt-gif](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/67c8f461-ac9d-493d-bc50-9db837a9c552)
 - **Solution:** We solved the error by increasing the PWM (Pulse Width Modulation) value from 40 to 70 in the motor control configuration, as shown in the following snippet of code: 
 
  ```c
@@ -166,6 +168,7 @@ This PWM adjustment provided the necessary power to the motors,   enable to turn
 
 **3: Bot Keeps Turning, Doesn't Stop**
 - **Description:**  When the bot detected a node and starts turning, we added a condition to stop turning when the Line Following Sensor Array (LSA) readings turned white. The error occurred because the turning function was placed within a while loop, and causing the LSA sensor readings to not update as expected. Because of this, the condition is not gets satisfied to stop turning. Because of this bot contnuosly starts taking taking turn, as shown below:
+
 ![5-Sep-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/ee23dd8d-a288-46ea-8a92-69dfacfa61a0)
 
 - **Solution:** To solv this, we added a function called get_raw_lsa() to update the LSA sensor readings. as shown in the following snippet of code:  
@@ -189,11 +192,15 @@ This PWM adjustment provided the necessary power to the motors,   enable to turn
       }  
        }
 ```
-   With this change, the condition was satisfied, allowing the bot to stop turning correctly when LSA readings become white. 
+   With this change, the condition was satisfied, allowing the bot to stop turning correctly when LSA readings become white. As shown in following video: 
+
+![6-Sep-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/9a9088af-e64c-49ed-b58f-e84a574bcb94)
 
 **4: Node Misidentification**
 
-- **Description:** The bot mistakenly identified nodes on straight paths.
+- **Description:** The bot mistakenly identified nodes on straight paths. & after detecting a node bot starts taking. As you can see in video below:
+
+![pt-gif](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/6f8ffcfd-d173-41ee-9bf7-effe1dbfdb06)
 
 - **Solution:** To solve this, we performed PID tuning and added flags to check for nodes. When the left or right line sensors detect a white surface (e.g., 1000), a "check-flag" is set to true (1). This flag rechecks the condition for nodes, and if it is false, no turn will be taken. As shown in the following snippet of code: 
 ```c
@@ -221,7 +228,13 @@ if (left_check == 1 )
     }
 }
 ```
-**5: Issue with the Final Run**
+After doing all these changes, Bot not detecting nodes on straight path, even if bot deviates from straight line. As you can see in video below:
+
+![7-SEP-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/48521adf-bd28-4f06-8dad-ac21e1278b31)
+
+**5: Not taking turns in final run**
+
+**6: Issue with the Final Run**
 
 - **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detected a node and according to the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only a 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. But bot can follow only one direction per node to complete final run successfully. So, because of this bot is not able to complete the final run and final run gets destroy. You can see this issue in the following video:
   ![WhatsApp Video 2023-10-28 at 03 53 01_90976d8f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/b31edc9b-3752-4192-852c-722c57c23473)
@@ -254,13 +267,26 @@ You can see this change in action in the video below:
 # Printed Circuit Board (PCB) design
 ## Board images: 
 - Front side:
-![Screenshot 2023-10-27 172828](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/dcec1c55-7f01-4440-8fc9-856f8971ced0)
+
+![Screenshot 2023-10-29 195127](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/b979a5ff-222a-4ef1-8e41-d45e825f398c)
 
 - Back side:
-![Screenshot 2023-10-27 173618](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/652db1fd-b264-4410-975c-1a318c16de0d)
+
+![Screenshot 2023-10-29 195227](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/3a02d37d-c7a0-4a80-b833-446d12417579)
 
 
-- Pinout:
+##  Routing:
+- Front copper routing
+
+![Screenshot 2023-10-29 200856](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/4f1f479b-ee07-40e1-a0a1-c2c04795312b)
+
+-Back copper kayer:
+
+![Screenshot 2023-10-29 200916](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/82cc5250-dfe9-4450-9f8b-e51b40d1fe28)
+
+- Final routing:
+
+![Screenshot 2023-10-29 200954](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/a1f907a0-4dc7-4782-9e0a-3ae237c5ad30)
 
 ## Getting Started with a Mazeblaze Board
 
