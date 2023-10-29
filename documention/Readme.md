@@ -129,8 +129,10 @@ void final_maze_solving()
 ## Error Descriptions and Solution
 **1: Task Watchdog Triggered**
 ![Screenshot 2023-10-27 002829](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/81be0992-ee0b-4599-9c4a-1d6c37175717)
-- **Description:** In the above screenshot, an error message, "Task watchdog got triggered," appeared when we flashed our code on the ESP. 
-- **Solution:** we found it necessary to add a delay so we resolved this error by adding a 10ms delay, as follows:
+- **Description:** In the above image, the "Task watchdog got triggered" error message appeared when we flashed our code on the ESP. This error occurs due to the watchdog mechanism in the ESP. The watchdog is like a timer that ensures tasks complete within their expected time. If a task takes too long to execute, it suggests that there might be a problem with task timing.
+The error was triggered because a specific task in our code was exceeding its expected execution time, causing the watchdog to trigger.
+- **Solution:** To solve this issue, we added a delay of 10 milliseconds (vTaskDelay(10 / portTICK_PERIOD_MS)) after a specific function. As shown in the following snippet of code: 
+
 ```c
 get_raw_lsa();
 calculate_error();
@@ -144,7 +146,8 @@ set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
 
 vTaskDelay(10 / portTICK_PERIOD_MS); //Delay
 ```
-    
+This allowed the task to complete within its designated time frame, preventing the watchdog from triggering.
+
 **2:  Unable to turn after detecting a node**
 - **Description:** When bot detects the node after that bot didn't taking turn. This error was ocuure because the bot's PWM for turn was 40, which was insufficient to turn, pwm should be grater than 55 for our case. Because when the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
 - **Solution:** We solved the error by increasing the PWM (Pulse Width Modulation) value from 40 to 70 in the motor control configuration, as shown in the following snippet of code: 
