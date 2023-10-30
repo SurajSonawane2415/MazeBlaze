@@ -165,7 +165,6 @@ void Leftturn()
 
         if (lsa_reading[2] == 1000 && rotation1==1)
         {
-            // ssvTaskDelay(40 / portTICK_PERIOD_MS);
             set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
             set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
             vTaskDelay(20 / portTICK_PERIOD_MS);
@@ -338,24 +337,6 @@ void straight()
     vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
-void final_straight_tune()
-{
-   for (int l=0; l<3; l++)
-   {
-    get_raw_lsa();
-    calculate_error();
-    calculate_correction();
-
-    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-
-    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
-    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
-    printf("FINAL STRAIGHT");
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-   } 
-}
-
 void final_straight()
 {
     get_raw_lsa();
@@ -381,37 +362,6 @@ void final_straight()
    take_final_left_turn=0;
    take_straight=0;
    stop=0;
-}
-
-
-void straight_tuning()
-{
-    get_raw_lsa();
-    calculate_error();
-    calculate_correction();
-
-    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-
-    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
-    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
-
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-}
-
-void final_error_tuning()
-{
-    get_raw_lsa();
-    calculate_error();
-    calculate_correction();
-
-    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-
-    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
-    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
-
-    vTaskDelay(30 / portTICK_PERIOD_MS);
 }
 
 void check_only_right()
@@ -473,15 +423,12 @@ void final_left_turn()
         printf("leftcheckturn\n");
         get_raw_lsa();
         vTaskDelay(10 / portTICK_PERIOD_MS);
-        if (lsa_reading[0] == 1000 && lsa_reading[2] == 1000)
+        while(lsa_reading[0] == 1000 && lsa_reading[2] == 1000)
         {
             printf("leftcheckcontinue\n");
-            final_error_tuning();
+            straight();
         }
-        else
-        {
-            Leftturn();
-        }
+        Leftturn();
     }
 
 }
@@ -494,15 +441,12 @@ void final_right_turn()
 
             printf("rightcheckturn\n");
             get_raw_lsa();
-            if (lsa_reading[4] == 1000 && lsa_reading[2] == 1000)
+            while (lsa_reading[4] == 1000 && lsa_reading[2] == 1000)
             {
                 printf("rightcheckcontinue\n");
-                final_error_tuning();
+                straight();
             }
-            else
-            {
-                Rightturn();
-            }
+            Rightturn();
         }
 }
 
@@ -589,8 +533,7 @@ void final_maze_solving()
     
     if (left_final_check == 1 || right_final_check == 1)
     {
-        vTaskDelay(10 / portTICK_PERIOD_MS);//delay
-        final_straight_tune();
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         get_raw_lsa();
         
         printf("1: %d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
@@ -738,7 +681,7 @@ void boot_button()
      {
        enable_boot=0;
        printf("\n STATE2: %d", boot_button_state);
-       vTaskDelay(1000 / portTICK_PERIOD_MS);
+       vTaskDelay(1000 / portTICK_PERIOD_MS); //after pressing boot button bot starts final run in 1 sec
        final_traversal();
      }
         // Control the LED based on the button state
@@ -778,7 +721,7 @@ void LFR()
 
     if (left_check == 1 || right_check == 1)
     {
-        vTaskDelay(40 / portTICK_PERIOD_MS);//delay
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         get_raw_lsa();
         
         if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000)) // checks left first
@@ -856,15 +799,12 @@ void LFR()
             printf("leftcheckturn\n");
             get_raw_lsa();
             vTaskDelay(10 / portTICK_PERIOD_MS);
-            if (lsa_reading[0] == 1000 && lsa_reading[2] == 1000)
+            while(lsa_reading[0] == 1000 && lsa_reading[2] == 1000)
             {
                 printf("leftcheckcontinue\n");
                 straight_tuning();
             }
-            else
-            {
-                Leftturn();
-            }
+            Leftturn();
         }
     }
     
@@ -874,18 +814,14 @@ void LFR()
         right_tune = 1;
         while (right_tune)
         {
-
             printf("rightcheckturn\n");
             get_raw_lsa();
-            if (lsa_reading[4] == 1000 && lsa_reading[2] == 1000)
+            while(lsa_reading[4] == 1000 && lsa_reading[2] == 1000)
             {
                 printf("rightcheckcontinue\n");
-                straight_tuning();
+                straight();
             }
-            else
-            {
-                Rightturn();
-            }
+            Rightturn();
         }
     }
 
@@ -902,15 +838,12 @@ void LFR()
 
                 printf("Ucheckturn\n");
                 get_raw_lsa();
-                if (lsa_reading[2] == 1000)
+                while(lsa_reading[2] == 1000)
                 {
                     printf("Ucheckcontinue\n");
-                    straight_tuning();
+                    straight();
                 }
-                else
-                {
-                    Uturn();
-                }
+                Uturn();
             }
         }
 
