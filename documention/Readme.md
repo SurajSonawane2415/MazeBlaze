@@ -38,7 +38,7 @@ The Left Follow algorithm is a method for navigating and tracking the movement o
 
 It is important to note that the algorithm assumes that the bot initially faces the North direction. Subsequently, the other directions are determined based on the North direction. These directions are fixed with respect to the world frame, and the bot continually updates its direction as it takes turns.
 
-#### Direction Index Tracking
+### Direction Index Tracking
 
 The program is designed to keep track of the serial numbers (direction indices) based on the assumptions mentioned above. Whenever the bot encounters a node or takes a turn, it records the direction index into the `store_path` array. Four key conditions are defined to track the bot's movement:
 
@@ -86,7 +86,7 @@ The program is designed to keep track of the serial numbers (direction indices) 
 
    In this case, the `direction` remains the same, signifying that the bot maintains its current orientation.
 
-When the robot moves and follows these rules, it records its current direction in the store_path array. This helps us keep track of where the robot has been. The robot always knows which direction it's facing, even if it takes many turns.
+When the bot moves and follows these rules, it records its current direction in the store_path array. This helps us keep track of where the bot has been. The bot always knows which direction it's facing, even if it takes many turns.
 
 ## Description Of Functions Used
 
@@ -235,7 +235,9 @@ After doing all these changes, Bot not detecting nodes on straight path, even if
 **5: Issue with the Final Run**
 
 - **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detected a node and according to the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only a 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. But bot can follow only one direction per node to complete final run successfully. So, because of this bot is not able to complete the final run and final run gets destroy. You can see this issue in the following video:
+
   ![WhatsApp Video 2023-10-28 at 03 53 01_90976d8f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/b31edc9b-3752-4192-852c-722c57c23473)
+
 - **Solution:** To fix this problem, we made a change in the code. We set a condition that makes the bot keep moving straight until the entire node is end (either the left or right sensor sees a white surface), which marks the end of a node. With this adjustment, the bot now moves straight through the entire node without detecting multiple nodes. This allowed it to complete the final run without any issues. As shown in the following snippet of code:
 ```c
 void final_straight()
