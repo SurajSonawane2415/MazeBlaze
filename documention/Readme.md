@@ -232,9 +232,7 @@ After doing all these changes, Bot not detecting nodes on straight path, even if
 
 ![7-SEP-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/48521adf-bd28-4f06-8dad-ac21e1278b31)
 
-**5: Not taking turns in final run**
-
-**6: Issue with the Final Run**
+**5: Issue with the Final Run**
 
 - **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detected a node and according to the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only a 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. But bot can follow only one direction per node to complete final run successfully. So, because of this bot is not able to complete the final run and final run gets destroy. You can see this issue in the following video:
   ![WhatsApp Video 2023-10-28 at 03 53 01_90976d8f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/b31edc9b-3752-4192-852c-722c57c23473)
