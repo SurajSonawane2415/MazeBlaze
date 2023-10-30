@@ -289,18 +289,19 @@ You can see this change in action in the video below:
 
 ![Screenshot 2023-10-29 200954](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/a1f907a0-4dc7-4782-9e0a-3ae237c5ad30)
 
-## Getting Started with a Mazeblaze Board
-- **Power Supply Unit**
+## Features of PCB
+- **Power Supply Unit :**
     Microcontrollers (MCUs) typically operate on 3.3V or 5V logic supply voltage, while the input voltage from Li-Po battery for our Mazeblaze board's motor driver is 12V.    
     So, in order to have a single input source, a power section which inter converts this 12V to 5V for MCU. This is achieved by using a step-down buck regulator.
     Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC.
   
-- **Motor Driver**
+- **Motor Driver :**
       Motors typically run on a 12V power supply, while microcontrollers (MCUs) usually output signals at either 5V or 3.3V. To make these work together, an additional external motor driver circuit is used to control motors according to the MCU input. The current and previous versions of the MazeBlaze board feature the TB6612FNG Motor Driver, a high-performance MOS-based H-Bridge motor driver.
 
-- **Protection against Reverse Voltage**
+- **Protection against Reverse Voltage :**
+    In the MazeBlaze Board, we use diodes to shield against reverse voltage in the power line. 12V Motor line, MCU and buck regulator have been separated with SS34 and SS24 schottky diodes respectively.
 
-    The MazeBlaze Board use diodes for reverse voltage protection in the power-line.
-    12V Motor line and power regulated line have been separated with SS34 and SS24 schottky diodes respectively.
+- **QTR-8RC line following reflectance IR sensor array :**
+    To detect white surface and black surface for line following and node detection. To travel trought maze we use QTR-8RC line following reflectance IR sensor array. Which 
 
 ## Major Changes for Mazeblaze V3 Board
