@@ -187,7 +187,6 @@ void Leftturn()
 
  if (lsa_reading[2] == 1000 && rotation1==1)
  {
- // ssvTaskDelay(40 / portTICK_PERIOD_MS);
  set_motor_speed(MOTOR_A_0, MOTOR_STOP, 0);
  set_motor_speed(MOTOR_A_1, MOTOR_STOP, 0);
  vTaskDelay(20 / portTICK_PERIOD_MS);
@@ -278,23 +277,6 @@ void straight()
  vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
-void final_straight_tune()
-{
- for (int l=0; l<3; l++)
- {
- get_raw_lsa();
- calculate_error();
- calculate_correction();
-
- left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
- right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-
- set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
- set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
- printf("FINAL STRAIGHT");
- vTaskDelay(10 / portTICK_PERIOD_MS);
- } 
-}
 
 void final_straight()
 {
@@ -575,8 +557,7 @@ void final_traversal()
  
  if (left_final_check == 1 || right_final_check == 1)
  {
- vTaskDelay(10 / portTICK_PERIOD_MS);//delay
- final_straight_tune();
+ vTaskDelay(10 / portTICK_PERIOD_MS);
  get_raw_lsa();
  
  printf("1: %d %d %d %d %d\n", lsa_reading[0], lsa_reading[1], lsa_reading[2], lsa_reading[3], lsa_reading[4]);
