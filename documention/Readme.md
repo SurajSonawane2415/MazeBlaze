@@ -10,6 +10,7 @@
 - [Dijkstra's algorithm](#dijkstra's-algorithm)
 - [Printed Circuit Board Design](#printed-circuit-board-design)
   - [Board Images](#board-images)
+  - [Routing](#routing)
   - [Getting Started with a Mazeblaze V3 Board](#getting-started-with-a-mazeblaze-board)
   - [Major Changes for Mazeblaze V3 Board](#major-changes-for-mazeblaze-v3-board)
 
