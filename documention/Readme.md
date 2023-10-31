@@ -299,6 +299,94 @@ You can see this change in action in the video below:
 
 ![WhatsApp Video 2023-10-28 at 04 04 37_c621a96f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/45dbe1d9-1780-4b4f-a9ab-4ff0af11b0dc)
 # Dijkstra's algorithm
+## Theory
+
+Dijkstra's algorithmis an algorithm for finding the shortest paths between nodes in a weighted graph.The algorithm maintains a set of visited vertices and a set of unvisited vertices. It starts at the source vertex and iteratively selects the unvisited vertex with the smallest tentative distance from the source. It then visits the neighbors of this vertex and updates their tentative distances if a shorter path is found. This process continues until the destination vertex is reached, or all reachable vertices have been visited.
+
+## Example
+
+Suppose we have to find the shortest distance from node 0 to node 6. We would follow this steps.
+
+**Step 1:** Start from Node 0 and mark Node as visited as you can check in below image visited Node is marked red.
+
+![](https://hackmd.io/_uploads/S15mLaAzT.png)
+
+
+
+**Step 2:** Check for adjacent Nodes, Now we have to choices (Either choose Node1 with distance 2 or either choose Node 2 with distance 6 ) and choose Node with minimum distance. In this step Node 1 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
+Distance: Node 0 -> Node 1 = 2
+
+![](https://hackmd.io/_uploads/BJqD86CGa.png)
+
+
+
+**Step 3:** Then Move Forward and check for adjacent Node which is Node 3, so marked it as visited and add up the distance, Now the distance will be:
+Distance: Node 0 -> Node 1 -> Node 3 = 2 + 5 = 7
+
+![](https://hackmd.io/_uploads/By-cLp0za.png)
+
+
+
+**Step 4:** Again we have two choices for adjacent Nodes (Either we can choose Node 4 with distance 10 or either we can choose Node 5 with distance 15) so choose Node with minimum distance. In this step Node 4 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
+Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 = 2 + 5 + 10 = 17
+
+![](https://hackmd.io/_uploads/H1hsIaCM6.png)
+
+
+
+**Step 5:** Again, Move Forward and check for adjacent Node which is Node 6, so marked it as visited and add up the distance, Now the distance will be:
+Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 -> Node 6 = 2 + 5 + 10 + 2 = 19
+
+![](https://hackmd.io/_uploads/Hk1aIpRf6.png)
+
+
+
+
+## Implementation
+**Step I -** First we intialize 3 arrays:-
+a)dist[] is an array to store the shortest distance from the source vertex to each vertex in the graph.
+b)sptSet[] is a set to keep track of vertices visited in the shortest path(VISITED_NODES).
+c)parent[] is an array to store the parent (predecessor) of each vertex in the shortest path.
+
+**Step II -** Then make all elements of dist[]=infinity, sptSet[]=0, parent[]=-1.
+
+**Step III -** ![](https://hackmd.io/_uploads/H1xGr8RCGa.png)
+
+With help of above code we update the dist array by storing the values which are the shortest distance of a node from source.
+Here first we make the distance of source to source 0 and then update sptSet and parent array.Then in the last for loop we check the nearest node to source and update all other arrays.Then  again go to last loop and find the nearest node from the last and store the distance between current 2 nodes + the distance travelled before.Continues this till we reach the last node.
+
+Finally we get the shortest path stored in parent array and shortest distance stored in th edistance array at index value = the end point.
+
+**Step IV -** ![](https://hackmd.io/_uploads/Byg5cARfT.png)
+
+With the help of above code we remove the direction that the bot needs to take to reach the nodes that are not included in shortest path.And store the directions in final_run that the bot needs to take to follow the shortest path.
+
+
+## Functions
+
+![](https://hackmd.io/_uploads/SJ-EaRAfT.png)
+
+It is used to find shortest path from source to end point and distance also of the shortest path.
+
+
+
+
+![](https://hackmd.io/_uploads/HyGv6R0Ga.png)
+
+It is used to make the bot travel along the shortest path.
+
+
+
+
+
+![](https://hackmd.io/_uploads/ByJqT0RMa.png)
+
+In it we have stored the direction that the bot takes to reach a node.
+
+
+
+
+
 # Printed Circuit Board (PCB) design
 ## Board images: 
 - Front side:
