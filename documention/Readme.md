@@ -309,35 +309,39 @@ Suppose we have to find the shortest distance from node 0 to node 6. We would fo
 
 **Step 1:** Start from Node 0 and mark Node as visited as you can check in below image visited Node is marked red.
 
-![](https://hackmd.io/_uploads/S15mLaAzT.png)
+![Screenshot from 2023-10-31 23-51-32](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/66f84c3e-14ec-4144-a542-676d0912c108)
 
 
 
 **Step 2:** Check for adjacent Nodes, Now we have to choices (Either choose Node1 with distance 2 or either choose Node 2 with distance 6 ) and choose Node with minimum distance. In this step Node 1 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
 Distance: Node 0 -> Node 1 = 2
 
-![](https://hackmd.io/_uploads/BJqD86CGa.png)
+![Screenshot from 2023-10-31 23-51-51](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/7a2faa39-b76c-4a47-b47f-18301ea2b37d)
+
 
 
 
 **Step 3:** Then Move Forward and check for adjacent Node which is Node 3, so marked it as visited and add up the distance, Now the distance will be:
 Distance: Node 0 -> Node 1 -> Node 3 = 2 + 5 = 7
 
-![](https://hackmd.io/_uploads/By-cLp0za.png)
+file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52-10.png
+
 
 
 
 **Step 4:** Again we have two choices for adjacent Nodes (Either we can choose Node 4 with distance 10 or either we can choose Node 5 with distance 15) so choose Node with minimum distance. In this step Node 4 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
 Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 = 2 + 5 + 10 = 17
 
-![](https://hackmd.io/_uploads/H1hsIaCM6.png)
+file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52-29.png
+
 
 
 
 **Step 5:** Again, Move Forward and check for adjacent Node which is Node 6, so marked it as visited and add up the distance, Now the distance will be:
 Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 -> Node 6 = 2 + 5 + 10 + 2 = 19
 
-![](https://hackmd.io/_uploads/Hk1aIpRf6.png)
+file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52-43.png
+
 
 
 
@@ -350,36 +354,40 @@ c)parent[] is an array to store the parent (predecessor) of each vertex in the s
 
 **Step II -** Then make all elements of dist[]=infinity, sptSet[]=0, parent[]=-1.
 
-**Step III -** ![](https://hackmd.io/_uploads/H1xGr8RCGa.png)
+**Step III -** ![Screenshot from 2023-11-01 01-01-47](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/0c7effd4-53d3-478d-a1d6-5d6884d7f82b)
+
 
 With help of above code we update the dist array by storing the values which are the shortest distance of a node from source.
 Here first we make the distance of source to source 0 and then update sptSet and parent array.Then in the last for loop we check the nearest node to source and update all other arrays.Then  again go to last loop and find the nearest node from the last and store the distance between current 2 nodes + the distance travelled before.Continues this till we reach the last node.
 
 Finally we get the shortest path stored in parent array and shortest distance stored in th edistance array at index value = the end point.
 
-**Step IV -** ![](https://hackmd.io/_uploads/Byg5cARfT.png)
+**Step IV -** ![Screenshot from 2023-11-01 01-20-18](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/adcbc46c-be7c-4c56-b7bb-810d33574a4e)
+
 
 With the help of above code we remove the direction that the bot needs to take to reach the nodes that are not included in shortest path.And store the directions in final_run that the bot needs to take to follow the shortest path.
 
 
 ## Functions
 
-![](https://hackmd.io/_uploads/SJ-EaRAfT.png)
+![Screenshot from 2023-11-01 01-25-42](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/326a8aa6-b949-45bb-8981-fe429b885143)
+
 
 It is used to find shortest path from source to end point and distance also of the shortest path.
 
 
 
 
-![](https://hackmd.io/_uploads/HyGv6R0Ga.png)
+file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-11-01%2001-26-14.png
+
 
 It is used to make the bot travel along the shortest path.
 
 
 
 
+file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-11-01%2001-27-46.png
 
-![](https://hackmd.io/_uploads/ByJqT0RMa.png)
 
 In it we have stored the direction that the bot takes to reach a node.
 
