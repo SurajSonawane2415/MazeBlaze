@@ -357,7 +357,10 @@ c)parent[] is an array to store the parent (predecessor) of each vertex in the s
 
 **Step II -** Then make all elements of dist[]=infinity, sptSet[]=0, parent[]=-1.
 
-**Step III -** ![Screenshot from 2023-11-01 01-01-47](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/0c7effd4-53d3-478d-a1d6-5d6884d7f82b)
+**Step III -** 
+
+
+![Screenshot from 2023-11-01 01-01-47](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/0c7effd4-53d3-478d-a1d6-5d6884d7f82b)
 
 
 With help of above code we update the dist array by storing the values which are the shortest distance of a node from source.
@@ -365,7 +368,10 @@ Here first we make the distance of source to source 0 and then update sptSet and
 
 Finally we get the shortest path stored in parent array and shortest distance stored in th edistance array at index value = the end point.
 
-**Step IV -** ![Screenshot from 2023-11-01 01-20-18](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/adcbc46c-be7c-4c56-b7bb-810d33574a4e)
+**Step IV -** 
+
+
+![Screenshot from 2023-11-01 01-20-18](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/adcbc46c-be7c-4c56-b7bb-810d33574a4e)
 
 
 With the help of above code we remove the direction that the bot needs to take to reach the nodes that are not included in shortest path.And store the directions in final_run that the bot needs to take to follow the shortest path.
@@ -381,7 +387,8 @@ It is used to find shortest path from source to end point and distance also of t
 
 
 
-file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-11-01%2001-26-14.png
+![Screenshot from 2023-11-01 01-26-14](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/f288b59c-cb4d-46ff-8d1b-09671544b2bd)
+
 
 
 It is used to make the bot travel along the shortest path.
@@ -389,7 +396,8 @@ It is used to make the bot travel along the shortest path.
 
 
 
-file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-11-01%2001-27-46.png
+![Screenshot from 2023-11-01 01-27-46](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/927139b3-7d81-44fc-9025-4917cd328ca9)
+
 
 
 In it we have stored the direction that the bot takes to reach a node.
