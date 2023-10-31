@@ -470,12 +470,6 @@ void dijkstra()
     c=1;
     }
     }
-    // for (int i = 0; i < a; i++)
-    // {
-    // printf(" %d ", miss[i]);
-    // }
-    // printf(" \n%d ",x);
-
     for(int i=0;i<a; i++){
     k = miss[i];
     dir[k-1]=0;
