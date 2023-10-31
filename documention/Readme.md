@@ -4,6 +4,7 @@
 - [Left Follow Rule](#left-follow-rule-lfr)
   - [Theory](#theory)
   - [Implementation](#implementation)
+  - [Example](#example)
   - [Description Of Functions Used](#description-of-functions-used)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
 
@@ -29,20 +30,14 @@ The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze s
 4. **Reverse when there are no other options:** If you find yourself in a situation where you can't turn left, go straight, or turn right, it means you've likely reached a dead end. In this case, you need to turn around and backtrack.
 
 ## Implementation
-
-The Left Follow algorithm is a method for navigating and tracking the movement of a bot as it encounters and traverses various paths. This algorithm records the bot's movements by assigning numeric values to different directions and then tracking these values in an array named `store_path`. The directions are indexed as follows:
-
+For the implementation of left follow rule, we need to record every turn taken by the bot by assigning numeric values to different directions. Then we need to recognize the redundant paths from the given turns.
+The directions are indexed as follows:
 - North: 1
 - East: 2
 - South: 3
 - West: 4
 
-It is important to note that the algorithm assumes that the bot initially faces the North direction. Subsequently, the other directions are determined based on the North direction. These directions are fixed with respect to the world frame, and the bot continually updates its direction as it takes turns.
-
-### Direction Index Tracking
-
-The program is designed to keep track of the serial numbers (direction indices) based on the assumptions mentioned above. Whenever the bot encounters a node or takes a turn, it records the direction index into the `store_path` array. Four key conditions are defined to track the bot's movement:
-
+It is important to note that the algorithm assumes that the bot initially faces the North direction. Subsequently, the other directions are determined based on the North direction. These directions are fixed with respect to the world frame, and the bot continually updates its direction as it takes turns. We records the direction index into the `store_path` array, as follows:
 1. **Condition for Right Turn**
 
    When the bot takes a right turn, it increments the `direction` by 1. This is achieved through the code:
@@ -89,6 +84,31 @@ The program is designed to keep track of the serial numbers (direction indices) 
 
 When the bot moves and follows these rules, it records its current direction in the store_path array. This helps us keep track of where the bot has been. The bot always knows which direction it's facing, even if it takes many turns.
 
+**Code to store this directions in dry_run array:**
+```c
+switch (direction) 
+        {
+            case 1:
+                printf("\t North\n");
+                store_path[array_index] = 1;
+                break;
+            case 2:
+                printf("\t East\n");
+                store_path[array_index] = 2;
+                break;
+            case 3:
+                printf("\t South\n");
+                store_path[array_index] = 3;
+                break;
+            case 4:
+                printf("\t West\n");
+                store_path[array_index] = 4;
+                break;
+        }
+//store_path[0] = 1 (The diection which bot faces initially, is always North)
+```
+## Example 
+![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/302faa35-240e-46ec-956d-5b14c28de9ba)
 ## Description Of Functions Used
 
 1. 
