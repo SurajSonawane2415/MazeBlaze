@@ -109,6 +109,21 @@ switch (direction)
 ```
 ## Example 
 ![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/302faa35-240e-46ec-956d-5b14c28de9ba)
+
+Thus, for our maze, Assuming starting position as North i.e. 1, The array store_path[ ] will store the following,
+
+```store_path[ ] = {1, 4, 1, 2, 1, 4, 2, 1, 4, 1, 4, 2, 1, 2, 1, 4, 3, 1, 4, 3, 1, 4, 3, 2, 3, 2, 4, 3, 2, 3, 3, 4, 4, 1, 4, 2, 1, 4, 2, 1, 4, 2, 1, 4, 2, 1, 4, 2, 1}```
+
+Here, the redundant paths are highlighted in bold
+
+store_path[ ] = {1, 4, 1, 2, 1, **4, 2,** 1, 4, 1, **4, 2,** 1, 2, 1, 4, **3, 1,** 4, **3, 1,** 4, 3, 2, 3, **2, 4,** 3, 2, 3, 3, 4, 4, 1, **4, 2,** 1, **4, 2,** 1, **4, 2,** 1, **4, 2,** 1, **4, 2,** 1}
+
+Thus, when we call simply_path(), it removes all these redundancies and stores the shortest path in an array called final_run[ ].
+
+`final_run[ ] = {1,4,1,2,1,1,4,1,1,2,1,4,4,4,3,2,3,3,2,3,3,4,4,1,1,1,1,1,1}`
+
+Thus, we make use of simplify_path() function in our code to remove all the redundancies from store_path[] and stores the shortest path in another array called final_run[].
+
 ## Description Of Functions Used
 
 1. 
