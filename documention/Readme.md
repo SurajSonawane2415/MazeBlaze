@@ -324,7 +324,8 @@ Distance: Node 0 -> Node 1 = 2
 **Step 3:** Then Move Forward and check for adjacent Node which is Node 3, so marked it as visited and add up the distance, Now the distance will be:
 Distance: Node 0 -> Node 1 -> Node 3 = 2 + 5 = 7
 
-file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52-10.png
+![Screenshot from 2023-10-31 23-52-10](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/5e6ee0e4-f5aa-45e8-b4c9-6544f0b755c6)
+
 
 
 
@@ -332,7 +333,8 @@ file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52
 **Step 4:** Again we have two choices for adjacent Nodes (Either we can choose Node 4 with distance 10 or either we can choose Node 5 with distance 15) so choose Node with minimum distance. In this step Node 4 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
 Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 = 2 + 5 + 10 = 17
 
-file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52-29.png
+![Screenshot from 2023-10-31 23-52-29](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/d1aa3257-d4ae-4273-8042-549f5d6bbf98)
+
 
 
 
@@ -340,7 +342,8 @@ file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52
 **Step 5:** Again, Move Forward and check for adjacent Node which is Node 6, so marked it as visited and add up the distance, Now the distance will be:
 Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 -> Node 6 = 2 + 5 + 10 + 2 = 19
 
-file:///home/atharva/Pictures/Screenshots/Screenshot%20from%202023-10-31%2023-52-43.png
+![Screenshot from 2023-10-31 23-52-43](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/b178af8a-8ce4-4b2d-82f8-a391c9b9fb01)
+
 
 
 
