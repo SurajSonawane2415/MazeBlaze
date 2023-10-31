@@ -341,3 +341,9 @@ You can see this change in action in the video below:
 - **Orange 11.1V 1000mAh 40C 3S Lithium Polymer Battery :** In mazeblaze board we use this battery as power source for motors & microcontroller. This battery is operating at 11.1 volts with a 1000mAh capacity, it provides a reliable and sustained power supply. Its high discharge rate of 40C ensures the ability to meet quick and intense power demands, making it an excellent choice for fast maze solving task.
 
 ## Major Changes for Mazeblaze V3 Board
+| Features | MazeBlaze-V1 | MazeBlaze-V3 |
+| -------- | -------- | -------- |
+| Sensor   | Line sensor array(LSA)| QTR-8RC line following reflectance IR sensor array |
+| Sensor Placement |on the main PCB and near to the wheels|Placed apart from the main PCB, the sensor can be adjustable and not closed to the wheels.|
+| Battery   | 3.7v Li-Po battery |11.1V 1000mAh 40C 3S Li-Po Battery |
+| Power Supply Unit| MT3608 Step UP Boost Converter is used for stepping up the voltage from 3.7V DC to 6V.|Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC.|
