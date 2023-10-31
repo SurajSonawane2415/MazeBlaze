@@ -281,7 +281,7 @@ You can see this change in action in the video below:
 
 ![Screenshot 2023-10-29 200856](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/4f1f479b-ee07-40e1-a0a1-c2c04795312b)
 
--Back copper kayer:
+- Back copper kayer:
 
 ![Screenshot 2023-10-29 200916](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/82cc5250-dfe9-4450-9f8b-e51b40d1fe28)
 
@@ -303,5 +303,7 @@ You can see this change in action in the video below:
 
 - **QTR-8RC line following reflectance IR sensor array :** 
     The QTR-8RC line following reflectance IR sensor array is used to detect the white/black lined surface and it sends this data to the microcontroller ESP-32. Analyzing and processing the data received by the microcontroller ESP-32, the purpose of line following and node detection is achieved. We use this sensor because it provides precise and reliable line detection, enhancing accuracy and efficiency in tasks like line following and maze navigation. Its infrared sensor ensures stable performance across various surface conditions.
-  
+
+- **Orange 11.1V 1000mAh 40C 3S Lithium Polymer Battery :** In mazeblaze board we use this battery as power source for motors & microcontroller. This battery is operating at 11.1 volts with a 1000mAh capacity, it provides a reliable and sustained power supply. Its high discharge rate of 40C ensures the ability to meet quick and intense power demands, making it an excellent choice for fast maze solving task.
+
 ## Major Changes for Mazeblaze V3 Board
