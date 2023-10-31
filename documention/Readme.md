@@ -11,7 +11,7 @@
 - [Printed Circuit Board Design](#printed-circuit-board-design)
   - [Board Images](#board-images)
   - [Routing](#routing)
-  - [Getting Started with a Mazeblaze V3 Board](#getting-started-with-a-mazeblaze-board)
+  - [Features of PCB](#features-of-pcb)
   - [Major Changes for Mazeblaze V3 Board](#major-changes-for-mazeblaze-v3-board)
 
 
@@ -301,7 +301,7 @@ You can see this change in action in the video below:
 - **Protection against Reverse Voltage :**
     In the MazeBlaze Board, we use diodes to shield against reverse voltage in the power line. 12V Motor line, MCU and buck regulator have been separated with SS34 and SS24 schottky diodes respectively.
 
-- **QTR-8RC line following reflectance IR sensor array :**
-    To detect white surface and black surface for line following and node detection. To travel trought maze we use QTR-8RC line following reflectance IR sensor array. Which 
-
+- **QTR-8RC line following reflectance IR sensor array :** 
+    The QTR-8RC line following reflectance IR sensor array is used to detect the white/black lined surface and it sends this data to the microcontroller ESP-32. Analyzing and processing the data received by the microcontroller ESP-32, the purpose of line following and node detection is achieved. We use this sensor because it provides precise and reliable line detection, enhancing accuracy and efficiency in tasks like line following and maze navigation. Its infrared sensor ensures stable performance across various surface conditions.
+  
 ## Major Changes for Mazeblaze V3 Board
