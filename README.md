@@ -28,28 +28,24 @@ To download and use this code, the minimum requirements are:
 - Microsoft VS Code or any other IDE
 
 ### Installation
-Clone the project by typing the following command in your Terminal/CommandPrompt
+Clone the project by typing the following command in your Terminal/CommandPrompt:
+      
+     `git clone https://github.com/SurajSonawane2415/MazeBlaze`
 
-`git clone https://github.com/SurajSonawane2415/MazeBlaze`
-
-Navigate to the MazeBlaze-v2.1 folder
-
-`cd MazeBlaze-v2.1`
+Navigate to the MazeBlaze folder:
+`cd MazeBlaze`
 
 ### Usage
 
 Once the requirements are satisfied, you can easily download the project and use it on your machine. After following the above steps , use the following commands to:
 
-To activate the IDF
-
+To activate the IDF:
 `get_idf`
 
-To build the code
-
+To build the code:
 `idf.py build`
 
-To flash the code
-
+To flash the code:
 `idf.py -p (PORT) flash monitor`
 
 ## Future Work
