@@ -360,7 +360,38 @@ c)parent[] is an array to store the parent (predecessor) of each vertex in the s
 **Step III -** 
 
 
-![Screenshot from 2023-11-01 01-01-47](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/0c7effd4-53d3-478d-a1d6-5d6884d7f82b)
+
+   ```c
+   for (int i = 0; i < V; i++) {
+    dist[i] = INT_MAX;
+    sptSet[i] = 0;
+    parent[i] = -1;
+    }
+
+    dist[sourceVertex - 1] = 0;
+
+    for (int count = 0; count < V - 1; count++) {
+    int minDist = INT_MAX;
+    int minIndex = -1;
+
+    for (int v = 0; v < V; v++) {
+    if (sptSet[v] == 0 && dist[v] < minDist) {
+    minDist = dist[v];
+    minIndex = v;
+    }
+    }
+
+    sptSet[minIndex] = 1;
+
+    for (int v = 0; v < V; v++) {
+    if (!sptSet[v] && costMatrix[minIndex][v] && dist[minIndex] != INT_MAX &&
+    dist[minIndex] + costMatrix[minIndex][v] < dist[v]) {
+    dist[v] = dist[minIndex] + costMatrix[minIndex][v];
+    parent[v] = minIndex;
+    }
+    }
+    }
+   ```
 
 
 With help of above code we update the dist array by storing the values which are the shortest distance of a node from source.
@@ -371,7 +402,36 @@ Finally we get the shortest path stored in parent array and shortest distance st
 **Step IV -** 
 
 
-![Screenshot from 2023-11-01 01-20-18](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/adcbc46c-be7c-4c56-b7bb-810d33574a4e)
+```c
+for (int i = 0; i < size; i++)
+    {
+    if (finalPathArr[i + 1] - finalPathArr[i] > 1)
+    {
+    z = (finalPathArr[i + 1] - finalPathArr[i]) - 1;
+    for (int j = 0; j < z; j++)
+    {
+    miss[a] = finalPathArr[i] + c;
+    c++;
+    a++;
+    }
+    c=1;
+    }
+    }
+    for(int i=0;i<a; i++){
+    k = miss[i];
+    dir[k-1]=0;
+
+    }
+    for(int i=0;i<x;i++){
+    printf(" %d ", dir[i]);
+    }
+
+    for(int i =0;i<x;i++){
+    if(dir[i]!=0){
+    final_run[y] = dir[i];
+    y++;
+    }
+  ```
 
 
 With the help of above code we remove the direction that the bot needs to take to reach the nodes that are not included in shortest path.And store the directions in final_run that the bot needs to take to follow the shortest path.
@@ -379,7 +439,9 @@ With the help of above code we remove the direction that the bot needs to take t
 
 ## Functions
 
-![Screenshot from 2023-11-01 01-25-42](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/326a8aa6-b949-45bb-8981-fe429b885143)
+```c
+void dijkstra()
+```
 
 
 It is used to find shortest path from source to end point and distance also of the shortest path.
@@ -387,8 +449,9 @@ It is used to find shortest path from source to end point and distance also of t
 
 
 
-![Screenshot from 2023-11-01 01-26-14](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/f288b59c-cb4d-46ff-8d1b-09671544b2bd)
-
+```c
+void final_traversal()
+```
 
 
 It is used to make the bot travel along the shortest path.
@@ -396,7 +459,9 @@ It is used to make the bot travel along the shortest path.
 
 
 
-![Screenshot from 2023-11-01 01-27-46](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/927139b3-7d81-44fc-9025-4917cd328ca9)
+```c
+int dir[] = {1,4,1,2,2,1,4,1,4,1,2,1,1,4,1,4,1,4,3,4,3,4,3,2,3,2,3,4,4,2,3,4,3,4,4,1,1,4,4,1,4,1,4,1,4,1,4,1};
+```
 
 
 
