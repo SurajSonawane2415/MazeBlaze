@@ -1,0 +1,126 @@
+
+(kicad_symbol_lib (version 20211014) (generator kicad_symbol_editor)
+  (symbol "TCRT5000" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "U" (id 0) (at -5.08867 5.72476 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Value" "TCRT5000" (id 1) (at -5.08381 -5.71929 0)
+      (effects (font (size 1.27 1.27)) (justify top left))
+    )
+    (property "Footprint" "OPTO_TCRT5000" (id 2) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "PARTREV" "1.7" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MANUFACTURER" "Vishay" (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MAXIMUM_PACKAGE_HEIGHT" "7.2mm" (id 6) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "STANDARD" "Manufacturer recommendations" (id 7) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (symbol "TCRT5000_0_0"
+      (polyline
+        (pts (xy -5.08 2.54) (xy -2.54 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -2.54 2.54) (xy -2.54 -2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -2.54 -2.54) (xy -5.08 -2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts
+          (xy -3.175 0.635)
+          (xy -1.905 0.635)
+          (xy -2.54 0.0)
+          (xy -3.175 0.635)
+        )
+        (stroke (width 0.1524)) (fill (type outline))
+      )
+      (polyline
+        (pts (xy -3.175 0.0) (xy -1.905 0.0)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -0.635 1.905) (xy 0.0 1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 0.0 1.27) (xy -0.635 1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -0.635 1.27) (xy 0.635 0.0)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 0.635 0.635) (xy 0.635 0.0)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 0.635 0.0) (xy 0.0 0.0)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 1.905 1.905) (xy 1.905 0.0)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 1.905 0.0) (xy 1.905 -1.905)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 1.905 0.0) (xy 3.81 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 3.81 2.54) (xy 5.08 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 1.905 0.0) (xy 3.81 -2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 3.81 -2.54) (xy 5.08 -2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts
+          (xy 3.175 -2.54)
+          (xy 3.81 -2.54)
+          (xy 3.81 -1.905)
+          (xy 3.175 -2.54)
+        )
+        (stroke (width 0.1524)) (fill (type outline))
+      )
+      (rectangle (start -5.08 -5.08) (end 5.08 5.08)
+        (stroke (width 0.1524)) (fill (type background))
+      )
+      (pin passive line (at -7.62 2.54 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "A"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -7.62 -2.54 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "CATH"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 7.62 2.54 180.0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "COLL"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 7.62 -2.54 180.0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "E"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+    )
+  )
+)
