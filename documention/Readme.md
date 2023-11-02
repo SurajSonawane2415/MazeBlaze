@@ -12,8 +12,8 @@
 - [Printed Circuit Board Design](#printed-circuit-board-design)
   - [Board Images](#board-images)
   - [Routing](#routing)
-  - [Features of PCB](#features-of-pcb)
-  - [Major Changes for Mazeblaze V3 Board](#major-changes-for-mazeblaze-v3-board)
+  - [Features of PCB](#Majorchanges-for-mazeblaze-v3-oard)
+  - [Major components used in the PCB include](#major-components-used-in-the-pcb-include)
 
 
 
@@ -541,11 +541,19 @@ In mazeblaze board we use this battery as power source for motors & microcontrol
 ## Major Changes for Mazeblaze V3 Board
 | Features | MazeBlaze-V1 | MazeBlaze-V3 |
 | -------- | -------- | -------- |
-| Sensor   | Line sensor array(LSA)| QTR-8RC line following reflectance IR sensor array |
+| Sensor   | TCRT5000 IR SENSOR | QTR-8RC line following reflectance IR sensor array |
 | Sensor Placement |on the main PCB and near to the wheels|Placed apart from the main PCB, the sensor can be adjustable and not closed to the wheels.|
 | Battery   | 3.7v Li-Po battery |11.1V 1000mAh 40C 3S Li-Po Battery |
 | Power Supply Unit| MT3608 Step UP Boost Converter is used for stepping up the voltage from 3.7V DC to 6V.|Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC|
 
-MT3608 Step UP Boost Converter to LM2576/96 Buck Convertor
-In MazeBlaze we used 3.7 v battery supply for motors so thats why we need boost converter that converts 3.7v to 6v. In this MazeBlaze-V3 board we are using 11.1 V so we dosent have any need of boost converter. but for MCU(ESP) we need 5v so we used buck converter
-The greater efficiency, output current and reliability of LM2576/96 were the reasons for this change. The efficiency of LM2576 is up to 92%. So we it used for stepping down the voltage from 12V to 5V DC
+### MT3608 Step UP Boost Converter to LM2576/96 Buck Convertor
+In MazeBlaze-V1 board, we used a 3.7V battery supply for the motors, that's why we require MT3608 boost converter to step-up the voltage from 3.7V to 6V for 6V N20 motors. However, in the MazeBlaze-V3 board, we utilize an 11.1V power source for 12V N20 motors, eliminating the need for a boost converter. And for the MCU (ESP), we require a 5V supply, for which we use a buck converter LM2576/96 due to their superior efficiency, higher output current, and increased reliability. The LM2576 have an efficiency up to 92%.
+
+### TCRT5000 IR SENSOR to QTR-8RC line following reflectance IR sensor array
+In MazeBlaze-V1 board for line following and nodes detection we using TCRT5000 IR senosros but this sensors are not more efficient in maze solving. So, now in MazeBlaze-v3 we using QTR-8RC IR sensor. QTR-8RC is chosen because of its enhanced resolution, wider range, and reduced interference, offering improved line-following precision and adaptability, vital for our maze-solving bot project.
+
+### 3.7v Li-Po battery to 11.1V 1000mAh 40C 3S Li-Po Battery
+In MazeBlaze-v1, we used a 3.7V battery, but the motors needed more voltage, so we used an MT3608 Step-Up Boost Converter to raise it to 6V. In MazeBlaze-v3, we switched to 12V N20 motors, so we used an 11.1V 1000mAh 40C 3S Li-Po Battery, it also eliminate the need of boost converter and it also a lightweight and not bulky.
+
+### Sensor Placement on the main PCB to Placed apart from the main PCB
+In MazeBlaze-v1, the line sensor array was placed very close to the wheels, which didn't allow the bot enough time to turn after detecting a node. This limitation prevented the bot from running at high speeds. To address this issue in MazeBlaze-V3, we positioned the sensors further apart from the main PCB, allowing us to adjust their placement as needed.
