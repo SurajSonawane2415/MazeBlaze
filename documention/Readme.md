@@ -21,7 +21,7 @@
 
 
 # Left Follow Rule (LFR)
-## Theory
+## Theory of LFR
 The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze solving technique used to navigate through 2D mazes. To use LFR, you start at the entrance of a maze with your left hand touching the wall to your left. As you navigate through the maze, you follow a set of rules:
 
 1. **Always turn left:** Whenever you reach an intersection or have a choice of paths, you make a left turn if it's possible, keeping your left hand on the wall.
@@ -32,7 +32,7 @@ The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze s
 
 4. **Reverse when there are no other options:** If you find yourself in a situation where you can't turn left, go straight, or turn right, it means you've likely reached a dead end. In this case, you need to turn around and backtrack.
 
-## Implementation
+## Implementation of LFR
 For the implementation of left follow rule, we need to record every turn taken by the bot by assigning numeric values to different directions. Then we need to recognize the redundant paths from the given turns.
 The directions are indexed as follows:
 - North: 1
