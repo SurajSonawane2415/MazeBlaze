@@ -7,7 +7,7 @@
   - [Example of LFR](#example-of-lfr)
   - [Description Of Functions Used in LFR](#description-of-functions-used-in-lfr)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
-- [Dijkstras algorithm](#dijkstras-algorithm)
+- [Dijkstra's algorithm](#dijkstras-algorithm)
   - [Theory of Dijkstra's](#theory-of-dijkstra's)
   - [Example of Dijkstra's](#example-of-dijkstra's)
   - [Implementation of Dijkstra's](#implementation-of-dijkstra's)
