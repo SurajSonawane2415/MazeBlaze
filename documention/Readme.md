@@ -483,6 +483,8 @@ In it we have stored the direction that the bot takes to reach a node.
 
 
 ##  Routing:
+For routing of the control circuitry we used traces of 0.3mm width, for power connections we used 1.5mm (12v) & 1mm (5v), and for motor control circuitry we used  0.6mm width tracks to ensure fairly high current flow.
+
 - Front copper routing
 
 ![Screenshot 2023-10-29 200856](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/4f1f479b-ee07-40e1-a0a1-c2c04795312b)
@@ -495,22 +497,46 @@ In it we have stored the direction that the bot takes to reach a node.
 
 ![Screenshot 2023-10-29 200954](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/a1f907a0-4dc7-4782-9e0a-3ae237c5ad30)
 
-## Features of PCB
-- **Power Supply Unit :**
-    Microcontrollers (MCUs) typically operate on 3.3V or 5V logic supply voltage, while the input voltage from Li-Po battery for our Mazeblaze board's motor driver is 12V.    
-    So, in order to have a single input source, a power section which inter converts this 12V to 5V for MCU. This is achieved by using a step-down buck regulator.
-    Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC.
+## Major components used in the PCB include -
+
+| **Components** | **Description** |
+| -------- | -------- |
+| ESP32-WROOM-32E    | Microcontroller   |
+| TB6612FNG    | Motor Driver   |
+| QTR-8RC    | Line following reflectance IR sensor array   |
+| Orange 11.1V 1000mAh 40C 3S   | Lithium Polymer Battery   | 
+|IC LM2576-S-5| Buck Regulator|
+|N20-12V-300 Rpm| Motor|
+
+### Power Supply Unit :
+
+![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/ffb9656b-686d-4be8-9eab-ddcb32443d58)
+
+Microcontrollers (MCUs) typically operate on 3.3V or 5V logic supply voltage, while the input voltage from Li-Po battery for our Mazeblaze board's motor driver is 12V.    
+So, in order to have a single input source, a power section which inter converts this 12V to 5V for MCU. This is achieved by using a step-down buck regulator.
+Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC.
   
-- **Motor Driver :**
-      Motors typically run on a 12V power supply, while microcontrollers (MCUs) usually output signals at either 5V or 3.3V. To make these work together, an additional external motor driver circuit is used to control motors according to the MCU input. The current and previous versions of the MazeBlaze board feature the TB6612FNG Motor Driver, a high-performance MOS-based H-Bridge motor driver.
+### Motor Driver :
 
-- **Protection against Reverse Voltage :**
-    In the MazeBlaze Board, we use diodes to shield against reverse voltage in the power line. 12V Motor line, MCU and buck regulator have been separated with SS34 and SS24 schottky diodes respectively.
+![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/8b1e6dc1-485b-48af-8c17-70827683a810)
 
-- **QTR-8RC line following reflectance IR sensor array :** 
-    The QTR-8RC line following reflectance IR sensor array is used to detect the white/black lined surface and it sends this data to the microcontroller ESP-32. Analyzing and processing the data received by the microcontroller ESP-32, the purpose of line following and node detection is achieved. We use this sensor because it provides precise and reliable line detection, enhancing accuracy and efficiency in tasks like line following and maze navigation. Its infrared sensor ensures stable performance across various surface conditions.
+Motors typically run on a 12V power supply, while microcontrollers (MCUs) usually output signals at either 5V or 3.3V. To make these work together, an additional external motor driver circuit is used to control motors according to the MCU input. The current and previous versions of the MazeBlaze board feature the TB6612FNG Motor Driver, a high-performance MOS-based H-Bridge motor driver.
 
-- **Orange 11.1V 1000mAh 40C 3S Lithium Polymer Battery :** In mazeblaze board we use this battery as power source for motors & microcontroller. This battery is operating at 11.1 volts with a 1000mAh capacity, it provides a reliable and sustained power supply. Its high discharge rate of 40C ensures the ability to meet quick and intense power demands, making it an excellent choice for fast maze solving task.
+### Protection against Reverse Voltage :
+  
+In the MazeBlaze Board, we use diodes to shield against reverse voltage in the power line. 12V Motor line, MCU and buck regulator have been separated with SS34 and SS24 schottky diodes respectively.
+
+### QTR-8RC line following reflectance IR sensor array :
+  
+![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/58559787-ffc2-460e-8e8d-c81b8f5e5df7)
+
+The QTR-8RC line following reflectance IR sensor array is used to detect the white/black lined surface and it sends this data to the microcontroller ESP-32. Analyzing and processing the data received by the microcontroller ESP-32, the purpose of line following and node detection is achieved. We use this sensor because it provides precise and reliable line detection, enhancing accuracy and efficiency in tasks like line following and maze navigation. Its infrared sensor ensures stable performance across various surface conditions.
+
+### Orange 11.1V 1000mAh 40C 3S Lithium Polymer Battery :
+
+![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/89102630-e579-4126-8b0e-1be5089a3aa0)
+
+In mazeblaze board we use this battery as power source for motors & microcontroller. This battery is operating at 11.1 volts with a 1000mAh capacity, it provides a reliable and sustained power supply. Its high discharge rate of 40C ensures the ability to meet quick and intense power demands, making it an excellent choice for fast maze solving task.
 
 ## Major Changes for Mazeblaze V3 Board
 | Features | MazeBlaze-V1 | MazeBlaze-V3 |
