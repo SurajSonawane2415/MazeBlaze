@@ -544,4 +544,8 @@ In mazeblaze board we use this battery as power source for motors & microcontrol
 | Sensor   | Line sensor array(LSA)| QTR-8RC line following reflectance IR sensor array |
 | Sensor Placement |on the main PCB and near to the wheels|Placed apart from the main PCB, the sensor can be adjustable and not closed to the wheels.|
 | Battery   | 3.7v Li-Po battery |11.1V 1000mAh 40C 3S Li-Po Battery |
-| Power Supply Unit| MT3608 Step UP Boost Converter is used for stepping up the voltage from 3.7V DC to 6V.|Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC.|
+| Power Supply Unit| MT3608 Step UP Boost Converter is used for stepping up the voltage from 3.7V DC to 6V.|Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC|
+
+MT3608 Step UP Boost Converter to LM2576/96 Buck Convertor
+In MazeBlaze we used 3.7 v battery supply for motors so thats why we need boost converter that converts 3.7v to 6v. In this MazeBlaze-V3 board we are using 11.1 V so we dosent have any need of boost converter. but for MCU(ESP) we need 5v so we used buck converter
+The greater efficiency, output current and reliability of LM2576/96 were the reasons for this change. The efficiency of LM2576 is up to 92%. So we it used for stepping down the voltage from 12V to 5V DC
