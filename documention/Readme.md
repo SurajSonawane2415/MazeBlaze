@@ -12,8 +12,8 @@
 - [Printed Circuit Board Design](#printed-circuit-board-design)
   - [Board Images](#board-images)
   - [Routing](#routing)
-  - [Features of PCB](#Majorchanges-for-mazeblaze-v3-oard)
   - [Major components used in the PCB include](#major-components-used-in-the-pcb-include)
+  - [Major Changes for Mazeblaze V3 Board](#major-changes-for-mazeblaze-v3-board)
 
 
 
