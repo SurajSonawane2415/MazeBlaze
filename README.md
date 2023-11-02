@@ -21,7 +21,12 @@ In this project, we will create a Line-following, Maze-solving bot which can fin
 Control Systems, Embedded C, Graph algorithms, Electronics, PCB design.
 
 ## Project Workflow
-
+- Learn to design PCB and understand the design of PCB used in MazeBlaze bot
+- Implementing left follow rule
+- Implementing path planing
+- Implementing Dijsktra's Algorithm
+- Implementing Flood Fill Algorithm
+- 
 ## Demo
 
 ## File Structure
@@ -55,10 +60,18 @@ To flash the code:
 `idf.py -p (PORT) flash monitor`
 
 ## Future Work
+- [ ] Implementing better algorithms like DFS/BFS.
+- [ ] Achive higher speeds by increasing the efficiency of bot.
 
 ## Contributors
+- [Suraj Sonawne](https://github.com/SurajSonawane2415)
+- [Atharva Nerkar](https://github.com/ARN1954)
+
 
 ## Acknowledgements and Resources
+- [SRA VJTI](https://sravjti.in/) Eklavya 2023
+- Special thanks to our mentors [Pritk Kannadiya](https://github.com/PritK99),[Raj Gupta](https://github.com/RajGupta17)  and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
+- [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze) Github repository of MazeBlaze-v2 
 
 ## License
 
