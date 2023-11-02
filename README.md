@@ -26,7 +26,7 @@ Control Systems, Embedded C, Graph algorithms, Electronics, PCB design.
 - Implementing path planing
 - Implementing Dijsktra's Algorithm
 - Implementing Flood Fill Algorithm
-- 
+  
 ## Demo
 
 ## File Structure
@@ -70,7 +70,7 @@ To flash the code:
 
 ## Acknowledgements and Resources
 - [SRA VJTI](https://sravjti.in/) Eklavya 2023
-- Special thanks to our mentors [Pritk Kannadiya](https://github.com/PritK99),[Raj Gupta](https://github.com/RajGupta17)  and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
+- Special thanks to our mentors [Pritk Kannadiya](https://github.com/PritK99), [Raj Gupta](https://github.com/RajGupta17)  and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
 - [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze) Github repository of MazeBlaze-v2 
 
 ## License
