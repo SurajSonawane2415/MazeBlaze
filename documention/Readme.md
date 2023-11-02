@@ -7,7 +7,7 @@
   - [Example of LFR](#example-of-lfr)
   - [Description Of Functions Used in LFR](#description-of-functions-used-in-lfr)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
-- [Dijkstra's algorithm](#dijkstra's-algorithm)
+- [Dijkstras algorithm](#dijkstras-algorithm)
   - [Theory of Dijkstra's](#theory-of-dijkstra's)
   - [Example of Dijkstra's](#example-of-dijkstra's)
   - [Implementation of Dijkstra's](#implementation-of-dijkstra's)
@@ -301,7 +301,7 @@ void final_straight()
 You can see this change in action in the video below:
 
 ![WhatsApp Video 2023-10-28 at 04 04 37_c621a96f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/45dbe1d9-1780-4b4f-a9ab-4ff0af11b0dc)
-# Dijkstra's algorithm
+# Dijkstras algorithm
 ## Theory of Dijkstra's
 
 Dijkstra's algorithmis an algorithm for finding the shortest paths between nodes in a weighted graph.The algorithm maintains a set of visited vertices and a set of unvisited vertices. It starts at the source vertex and iteratively selects the unvisited vertex with the smallest tentative distance from the source. It then visits the neighbors of this vertex and updates their tentative distances if a shorter path is found. This process continues until the destination vertex is reached, or all reachable vertices have been visited.
