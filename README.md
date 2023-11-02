@@ -18,7 +18,7 @@ Develop a Line following and Maze Solving bot based on PID controller which can 
 In this project, we will create a Line-following, Maze-solving bot which can find the shortest path in the given maze.
 
 ## Domains Explored
-Control Systems, Embedded C, Graph algorithms, Electronics, PCB design.
+ Embedded C, Control Systems, Graph algorithms, Electronics, PCB design.
 
 ## Project Workflow
 - Learn to design PCB and understand the design of PCB used in MazeBlaze bot
