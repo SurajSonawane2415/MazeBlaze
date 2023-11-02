@@ -7,8 +7,11 @@
   - [Example](#example)
   - [Description Of Functions Used](#description-of-functions-used)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
-
 - [Dijkstra's algorithm](#dijkstra's-algorithm)
+  - [Theory](#theory)
+  - [Example](#example)
+  - [Implementation](#implementation)
+  - [Functions Used](#description-of-functions-used)
 - [Printed Circuit Board Design](#printed-circuit-board-design)
   - [Board Images](#board-images)
   - [Routing](#routing)
@@ -437,7 +440,7 @@ for (int i = 0; i < size; i++)
 With the help of above code we remove the direction that the bot needs to take to reach the nodes that are not included in shortest path.And store the directions in final_run that the bot needs to take to follow the shortest path.
 
 
-## Functions
+## Functions Used
 
 ```c
 void dijkstra()
