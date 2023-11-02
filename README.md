@@ -32,6 +32,23 @@ In this project, we will create a Line-following, Maze-solving bot which can fin
 
 ## File Structure
 
+👨‍💻MazeBlaze-v3.1
+- 📂Firmware
+  - 📂1_line_follow_rule //Contains code for left-follow-rule and path planning
+    - 📂main
+      - 📄main.c
+      - 📄CMakeList.txt
+    - 📄CMakeList.txt
+  - 📂2_Dijkstra //Contains code for dijkstra`s algorithm
+- 📂Components //Contains all the header and source files used in the project
+  - 📂include
+  - 📂src
+  - 📂esp-wifi-logger
+  - 📄CMakeList.txt
+- 📂documentation
+- 📂pcb_design
+- 📂task
+
 ## Getting started
 ### Prerequisites
 To download and use this code, the minimum requirements are:
