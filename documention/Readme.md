@@ -2,10 +2,10 @@
 
 # TABLE OF CONTENTS
 - [Left Follow Rule](#left-follow-rule-lfr)
-  - [Theory](#theory)
-  - [Implementation](#implementation)
-  - [Example](#example)
-  - [Description Of Functions Used](#description-of-functions-used)
+  - [Theory of LFR](#theory-of-lfr)
+  - [Implementation of LFR](#implementation-of-lfr)
+  - [Example of LFR](#example)
+  - [Description Of Functions Used in LFR](#description-of-functions-used)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
 - [Dijkstra's algorithm](#dijkstra's-algorithm)
   - [Theory](#theory)
