@@ -189,7 +189,7 @@ vTaskDelay(10 / portTICK_PERIOD_MS); //Delay
 This allowed the task to be completed within its designated time frame, preventing the watchdog from triggering.
 
 **2:  Unable to turn after detecting a node**
-- **Description:** When the bot detects the node after that bot doesn't take a turn. This error was caused because the bot's PWM for the turn was 40, which was insufficient to turn, pwm should be greater than 55 for our case. When the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
+- **Description:** When the bot detects the node after that bot doesn't take a turn. This error was caused because the bot's PWM for the turn was 40, which was insufficient to turn, PWM should be greater than 55 for our case. When the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
 
 ![nt-gif](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/67c8f461-ac9d-493d-bc50-9db837a9c552)
 - **Solution:** We solved the error by increasing the PWM (Pulse Width Modulation) value from 40 to 70 in the motor control configuration, as shown in the following snippet of code: 
