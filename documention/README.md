@@ -23,7 +23,7 @@
 
 # Left Follow Rule (LFR)
 ## Theory of LFR
-The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze solving technique used to navigate through 2D mazes. To use LFR, you start at the entrance of a maze with your left hand touching the wall to your left. As you navigate through the maze, you follow a set of rules:
+The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze-solving technique used to navigate through 2D mazes. To use LFR, you start at the entrance of a maze with your left hand touching the wall to your left. As you navigate through the maze, you follow a set of rules:
 
 1. **Always turn left:** Whenever you reach an intersection or have a choice of paths, you make a left turn if it's possible, keeping your left hand on the wall.
 
@@ -34,14 +34,14 @@ The Left-Hand Rule (LFR), also known as the "left-follow-algorithm," is a maze s
 4. **Reverse when there are no other options:** If you find yourself in a situation where you can't turn left, go straight, or turn right, it means you've likely reached a dead end. In this case, you need to turn around and backtrack.
 
 ## Implementation of LFR
-For the implementation of left follow rule, we need to record every turn taken by the bot by assigning numeric values to different directions. Then we need to recognize the redundant paths from the given turns.
+For the implementation of the left-follow rule, we need to record every turn taken by the bot by assigning numeric values to different directions. Then we need to recognize the redundant paths from the given turns.
 The directions are indexed as follows:
 - North: 1
 - East: 2
 - South: 3
 - West: 4
 
-It is important to note that the algorithm assumes that the bot initially faces the North direction. Subsequently, the other directions are determined based on the North direction. These directions are fixed with respect to the world frame, and the bot continually updates its direction as it takes turns. We records the direction index into the `store_path` array, as follows:
+It is important to note that the algorithm assumes that the bot initially faces the North direction. Subsequently, the other directions are determined based on the North direction. These directions are fixed concerning the world frame, and the bot continually updates its direction as it takes turns. We record the direction index into the `store_path` array, as follows:
 1. **Condition for Right Turn**
 
    When the bot takes a right turn, it increments the `direction` by 1. This is achieved through the code:
@@ -88,7 +88,7 @@ It is important to note that the algorithm assumes that the bot initially faces 
 
 When the bot moves and follows these rules, it records its current direction in the store_path array. This helps us keep track of where the bot has been. The bot always knows which direction it's facing, even if it takes many turns.
 
-**Code to store this directions in dry_run array:**
+**Code to store these directions in dry_run array:**
 ```c
 switch (direction) 
         {
@@ -109,12 +109,12 @@ switch (direction)
                 store_path[array_index] = 4;
                 break;
         }
-//store_path[0] = 1 (The diection which bot faces initially, is always North)
+//store_path[0] = 1 (The direction which the bot faces initially, is always North)
 ```
 ## Example 
 ![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/302faa35-240e-46ec-956d-5b14c28de9ba)
 
-Thus, for our maze, Assuming starting position as North i.e. 1, The array store_path[ ] will store the following,
+Thus, for our maze, Assuming the starting position as North i.e. 1, The array store_path[ ] will store the following,
 
 ```store_path[ ] = {1, 4, 1, 2, 1, 4, 2, 1, 4, 1, 4, 2, 1, 2, 1, 4, 3, 1, 4, 3, 1, 4, 3, 2, 3, 2, 4, 3, 2, 3, 3, 4, 4, 1, 4, 2, 1, 4, 2, 1, 4, 2, 1, 4, 2, 1, 4, 2, 1}```
 
@@ -126,7 +126,7 @@ Thus, when we call simply_path(), it removes all these redundancies and stores t
 
 `final_run[ ] = {1,4,1,2,1,1,4,1,1,2,1,4,4,4,3,2,3,3,2,3,3,4,4,1,1,1,1,1,1}`
 
-Thus, we make use of simplify_path() function in our code to remove all the redundancies from store_path[] and stores the shortest path in another array called final_run[].
+Thus, we make use of the simplify_path() function in our code to remove all the redundancies from store_path[] and store the shortest path in another array called final_run[].
 
 ## Description Of Functions Used
 
@@ -134,7 +134,7 @@ Thus, we make use of simplify_path() function in our code to remove all the redu
 ```c
 void LFR()
 ```
-   - **Description:** This function helps the robot explore a maze by following the Left Follow Rule. It detects nodes by using LSA sensor(Line Sensor Array) and take turns according to the type of node.
+   - **Description:** This function helps the robot explore a maze by following the Left Follow Rule. It detects nodes by using an LSA sensor(Line Sensor Array) and takes turns according to the type of node.
 
 2. 
 ```c
@@ -169,7 +169,7 @@ void final_maze_solving()
 ## Error Descriptions and Solution
 **1: Task Watchdog Triggered**
 ![Screenshot 2023-10-27 002829](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/81be0992-ee0b-4599-9c4a-1d6c37175717)
-- **Description:** In the above image, the "Task watchdog got triggered" error message appeared when we flashed our code on the ESP. This error occurs due to the watchdog mechanism in the ESP. The watchdog is like a timer that ensures tasks complete within their expected time. If a task takes too long to execute, it suggests that there might be a problem with task timing.
+- **Description:** In the above image, the "Task watchdog got triggered" error message appeared when we flashed our code on the ESP. This error occurs due to the watchdog mechanism in the ESP. The watchdog is like a timer that ensures tasks are completed within their expected time. If a task takes too long to execute, it suggests that there might be a problem with task timing.
 The error was triggered because a specific task in our code was exceeding its expected execution time, causing the watchdog to trigger.
 - **Solution:** To solve this issue, we added a delay of 10 milliseconds (vTaskDelay(10 / portTICK_PERIOD_MS)) after a specific function. As shown in the following snippet of code: 
 
@@ -186,10 +186,10 @@ set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
 
 vTaskDelay(10 / portTICK_PERIOD_MS); //Delay
 ```
-This allowed the task to complete within its designated time frame, preventing the watchdog from triggering.
+This allowed the task to be completed within its designated time frame, preventing the watchdog from triggering.
 
 **2:  Unable to turn after detecting a node**
-- **Description:** When bot detects the node after that bot didn't taking turn. This error was ocuure because the bot's PWM for turn was 40, which was insufficient to turn, pwm should be grater than 55 for our case. Because when the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
+- **Description:** When the bot detects the node after that bot doesn't take a turn. This error was caused because the bot's PWM for the turn was 40, which was insufficient to turn, pwm should be greater than 55 for our case. When the PWM value was set to 40, it likely provided a relatively low average power to the motors, which resulted in the bot's motors not being able to generate enough torque or force to turn effectively.
 
 ![nt-gif](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/67c8f461-ac9d-493d-bc50-9db837a9c552)
 - **Solution:** We solved the error by increasing the PWM (Pulse Width Modulation) value from 40 to 70 in the motor control configuration, as shown in the following snippet of code: 
@@ -204,16 +204,16 @@ This allowed the task to complete within its designated time frame, preventing t
      vTaskDelay(10 / portTICK_PERIOD_MS);
    }
  ```
-This PWM adjustment provided the necessary power to the motors,   enable to turns correctly after node detection. 
+This PWM adjustment provided the necessary power to the motors, enabling them to turn correctly after node detection. 
 
 **3: Bot Keeps Turning, Doesn't Stop**
-- **Description:**  When the bot detected a node and starts turning, we added a condition to stop turning when the Line Following Sensor Array (LSA) readings turned white. The error occurred because the turning function was placed within a while loop, and causing the LSA sensor readings to not update as expected. Because of this, the condition is not gets satisfied to stop turning. Because of this bot contnuosly starts taking taking turn, as shown below:
+- **Description:**  When the bot detected a node and started turning, we added a condition to stop turning when the Line Following Sensor Array (LSA) readings turned white. The error occurred because the turning function was placed within a while loop, and causing the LSA sensor readings to not update as expected. Because of this, the condition does not get satisfied to stop turning. Because of this bot constantly starts taking turns, as shown below:
 
 ![5-Sep-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/ee23dd8d-a288-46ea-8a92-69dfacfa61a0)
 
-- **Solution:** To solv this, we added a function called get_raw_lsa() to update the LSA sensor readings. as shown in the following snippet of code:  
+- **Solution:** To solve this, we added a function called get_raw_lsa() to update the LSA sensor readings. as shown in the following snippet of code:  
 ```c
-   Leftturn(){
+   Left turn(){
       while(stop)
       {
         get_raw_lsa();//function to update lsa readings
@@ -232,17 +232,17 @@ This PWM adjustment provided the necessary power to the motors,   enable to turn
       }  
        }
 ```
-   With this change, the condition was satisfied, allowing the bot to stop turning correctly when LSA readings become white. As shown in following video: 
+   With this change, the condition was satisfied, allowing the bot to stop turning correctly when LSA readings became white. As shown in the following video: 
 
 ![6-Sep-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/9a9088af-e64c-49ed-b58f-e84a574bcb94)
 
 **4: Node Misidentification**
 
-- **Description:** The bot mistakenly identified nodes on straight paths. & after detecting a node bot starts taking. As you can see in video below:
+- **Description:** The bot mistakenly identified nodes on straight paths. & after detecting a node bot starts taking. As you can see in the video below:
 
 ![pt-gif](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/6f8ffcfd-d173-41ee-9bf7-effe1dbfdb06)
 
-- **Solution:** To solve this, we performed PID tuning and added flags to check for nodes. When the left or right line sensors detect a white surface (e.g., 1000), a "check-flag" is set to true (1). This flag rechecks the condition for nodes, and if it is false, no turn will be taken. As shown in the following snippet of code: 
+- **Solution:** To solve this, we performed PID tuning and added flags to check for nodes. When the left or right line sensors detect a white surface (e.g., 1000), a "check flag" is set to true (1). This flag rechecks the condition for nodes, and if it is false, no turn will be taken. As shown in the following snippet of code: 
 ```c
 get_raw_lsa();
 left_check = 0;
@@ -268,17 +268,17 @@ if (left_check == 1 )
     }
 }
 ```
-After doing all these changes, Bot not detecting nodes on straight path, even if bot deviates from straight line. As you can see in video below:
+After making all these changes, the bot does not detect nodes on a straight path, even if the bot deviates from a straight line. As you can see in the video below:
 
 ![7-SEP-2023](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/48521adf-bd28-4f06-8dad-ac21e1278b31)
 
 **5: Issue with the Final Run**
 
-- **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detected a node and according to the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only a 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. But bot can follow only one direction per node to complete final run successfully. So, because of this bot is not able to complete the final run and final run gets destroy. You can see this issue in the following video:
+- **Description:** The problem occurred during the final run., as the bot followed the directions from the `final_run` array after detecting a node. When the bot detects a node the bot should move straight(forward). However, here's where the problem came up: the bot moved forward for only 10 milliseconds. During this short time, it was still on the same node, and as a result, it detected a second node at that same node. The robot then followed the new direction from the `final_run` array. However, the bot can follow only one direction per node to complete the final run successfully. So, because of this bot is not able to complete the final run, and the final run gets destroyed. You can see this issue in the following video:
 
   ![WhatsApp Video 2023-10-28 at 03 53 01_90976d8f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/b31edc9b-3752-4192-852c-722c57c23473)
 
-- **Solution:** To fix this problem, we made a change in the code. We set a condition that makes the bot keep moving straight until the entire node is end (either the left or right sensor sees a white surface), which marks the end of a node. With this adjustment, the bot now moves straight through the entire node without detecting multiple nodes. This allowed it to complete the final run without any issues. As shown in the following snippet of code:
+- **Solution:** To fix this problem, we made a change in the code. We set a condition that makes the bot keep moving straight until the entire node is ended (either the left or right sensor sees a white surface), which marks the end of a node. With this adjustment, the bot now moves straight through the entire node without detecting multiple nodes. This allowed it to complete the final run without any issues. As shown in the following snippet of code:
 ```c
 void final_straight()
 {
@@ -303,27 +303,27 @@ You can see this change in action in the video below:
 
 ![WhatsApp Video 2023-10-28 at 04 04 37_c621a96f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/45dbe1d9-1780-4b4f-a9ab-4ff0af11b0dc)
 
-## Problems with Left Follow Rule (LFR) algorithm
-The Left-Follow algorithm helps in reducing the redundancies from the path. However, the problem with Left-Follow rule is that the entire maze does not get mapped, and thus the path so obtained in final_run[ ] is not the most optimum path.
+## Problems with the Left Follow Rule (LFR) algorithm
+The Left-Follow algorithm helps in reducing the redundancies from the path. However, the problem with the Left-Follow rule is that the entire maze does not get mapped, and thus the path obtained in final_run[ ] is not the most optimum path.
 
-However,The problem with Left-Follow rule is that the entire maze does not get mapped, and thus the path so obtained in final_run[ ] is not the most optimum path. That's why, after this algorithm, we implemented Dijkstra's algorithm, to obtain the shortest path.
+However, The problem with the Left-Follow rule is that the entire maze does not get mapped, and thus the path obtained in final_run[ ] is not the most optimum path. That's why, after this algorithm, we implemented Dijkstra's algorithm, to obtain the shortest path.
 
 # Dijkstra's algorithm
 ## Theory of Dijkstra's
 
-Dijkstra's algorithmis an algorithm for finding the shortest paths between nodes in a weighted graph.The algorithm maintains a set of visited vertices and a set of unvisited vertices. It starts at the source vertex and iteratively selects the unvisited vertex with the smallest tentative distance from the source. It then visits the neighbors of this vertex and updates their tentative distances if a shorter path is found. This process continues until the destination vertex is reached, or all reachable vertices have been visited.
+Dijkstra's algorithm is an algorithm for finding the shortest paths between nodes in a weighted graph. The algorithm maintains a set of visited vertices and a set of unvisited vertices. It starts at the source vertex and iteratively selects the unvisited vertex with the smallest tentative distance from the source. It then visits the neighbors of this vertex and updates their tentative distances if a shorter path is found. This process continues until the destination vertex is reached, or all reachable vertices have been visited.
 
 ## Example of Dijkstra's
 
-Suppose we have to find the shortest distance from node 0 to node 6. We would follow this steps.
+Suppose we have to find the shortest distance from node 0 to node 6. We would follow these steps.
 
-**Step 1:** Start from Node 0 and mark Node as visited as you can check in below image visited Node is marked red.
+**Step 1:** Start from Node 0 and mark Node as visited as you can check in the below image visited Node is marked red.
 
 ![Screenshot from 2023-10-31 23-51-32](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/66f84c3e-14ec-4144-a542-676d0912c108)
 
 
 
-**Step 2:** Check for adjacent Nodes, Now we have to choices (Either choose Node1 with distance 2 or either choose Node 2 with distance 6 ) and choose Node with minimum distance. In this step Node 1 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
+**Step 2:** Check for adjacent Nodes, Now we have two choices (Either choose Node1 with distance 2 or choose Node 2 with distance 6 ) and choose Node with minimum distance. In this step Node 1 is the Minimum distance adjacent to Node, so mark it as visited and add up the distance.
 Distance: Node 0 -> Node 1 = 2
 
 ![Screenshot from 2023-10-31 23-51-51](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/7a2faa39-b76c-4a47-b47f-18301ea2b37d)
@@ -331,7 +331,7 @@ Distance: Node 0 -> Node 1 = 2
 
 
 
-**Step 3:** Then Move Forward and check for adjacent Node which is Node 3, so marked it as visited and add up the distance, Now the distance will be:
+**Step 3:** Then Move Forward and check for the adjacent Node which is Node 3, so mark it as visited and add up the distance, Now the distance will be:
 Distance: Node 0 -> Node 1 -> Node 3 = 2 + 5 = 7
 
 ![Screenshot from 2023-10-31 23-52-10](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/5e6ee0e4-f5aa-45e8-b4c9-6544f0b755c6)
@@ -340,7 +340,7 @@ Distance: Node 0 -> Node 1 -> Node 3 = 2 + 5 = 7
 
 
 
-**Step 4:** Again we have two choices for adjacent Nodes (Either we can choose Node 4 with distance 10 or either we can choose Node 5 with distance 15) so choose Node with minimum distance. In this step Node 4 is Minimum distance adjacent Node, so marked it as visited and add up the distance.
+**Step 4:** Again we have two choices for adjacent Nodes (Either we can choose Node 4 with distance 10 or either we can choose Node 5 with distance 15) so choose Node with minimum distance. In this step Node 4 is the Minimum distance adjacent to Node, so mark it as visited and add up the distance.
 Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 = 2 + 5 + 10 = 17
 
 ![Screenshot from 2023-10-31 23-52-29](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/d1aa3257-d4ae-4273-8042-549f5d6bbf98)
@@ -349,7 +349,7 @@ Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 = 2 + 5 + 10 = 17
 
 
 
-**Step 5:** Again, Move Forward and check for adjacent Node which is Node 6, so marked it as visited and add up the distance, Now the distance will be:
+**Step 5:** Again, Move Forward and check for the adjacent Node which is Node 6, so mark it as visited and add up the distance, Now the distance will be:
 Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 -> Node 6 = 2 + 5 + 10 + 2 = 19
 
 ![Screenshot from 2023-10-31 23-52-43](https://github.com/SurajSonawane2415/MazeBlaze/assets/132119263/b178af8a-8ce4-4b2d-82f8-a391c9b9fb01)
@@ -360,7 +360,7 @@ Distance: Node 0 -> Node 1 -> Node 3 -> Node 4 -> Node 6 = 2 + 5 + 10 + 2 = 19
 
 
 ## Implementation of Dijkstra's 
-**Step I -** First we intialize 3 arrays:-
+**Step I -** First we initialize 3 arrays:-
 a)dist[] is an array to store the shortest distance from the source vertex to each vertex in the graph.
 b)sptSet[] is a set to keep track of vertices visited in the shortest path(VISITED_NODES).
 c)parent[] is an array to store the parent (predecessor) of each vertex in the shortest path.
@@ -404,10 +404,10 @@ c)parent[] is an array to store the parent (predecessor) of each vertex in the s
    ```
 
 
-With help of above code we update the dist array by storing the values which are the shortest distance of a node from source.
-Here first we make the distance of source to source 0 and then update sptSet and parent array.Then in the last for loop we check the nearest node to source and update all other arrays.Then  again go to last loop and find the nearest node from the last and store the distance between current 2 nodes + the distance travelled before.Continues this till we reach the last node.
+With the help of the above code, we update the dist array by storing the values which are the shortest distance of a node from the source.
+Here first we make the distance of source to source 0 and then update sptSet and parent array. Then in the last for loop, we check the nearest node to source and update all other arrays. Then again go to the last loop find the nearest node from the last and store the distance between the current 2 nodes + the distance travelled before. Continue this till we reach the last node.
 
-Finally we get the shortest path stored in parent array and shortest distance stored in th edistance array at index value = the end point.
+Finally, we get the shortest path stored in the parent array and the shortest distance stored in the distance array at index value = the endpoint.
 
 **Step IV -** 
 
@@ -444,7 +444,7 @@ for (int i = 0; i < size; i++)
   ```
 
 
-With the help of above code we remove the direction that the bot needs to take to reach the nodes that are not included in shortest path.And store the directions in final_run that the bot needs to take to follow the shortest path.
+With the help of the above code, we remove the direction that the bot needs to take to reach the nodes that are not included in the shortest path. And store the directions in final_run that the bot needs to take to follow the shortest path.
 
 
 ## Description Of Functions Used in Dijkstra's
@@ -454,7 +454,7 @@ void dijkstra()
 ```
 
 
-It is used to find shortest path from source to end point and distance also of the shortest path.
+It is used to find the shortest path from the source to the endpoint and the distance of the shortest path.
 
 
 
@@ -475,7 +475,7 @@ int dir[] = {1,4,1,2,2,1,4,1,4,1,2,1,1,4,1,4,1,4,3,4,3,4,3,2,3,2,3,4,4,2,3,4,3,4
 
 
 
-In it we have stored the direction that the bot takes to reach a node.
+In it, we have stored the direction that the bot takes to reach a node.
 
 
 
@@ -499,7 +499,7 @@ For routing of the control circuitry we used traces of 0.3mm width, for power co
 
 ![Screenshot 2023-10-29 200856](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/4f1f479b-ee07-40e1-a0a1-c2c04795312b)
 
-- Back copper kayer:
+- Back copper layer:
 
 ![Screenshot 2023-10-29 200916](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/82cc5250-dfe9-4450-9f8b-e51b40d1fe28)
 
@@ -522,8 +522,8 @@ For routing of the control circuitry we used traces of 0.3mm width, for power co
 
 ![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/ffb9656b-686d-4be8-9eab-ddcb32443d58)
 
-Microcontrollers (MCUs) typically operate on 3.3V or 5V logic supply voltage, while the input voltage from Li-Po battery for our Mazeblaze board's motor driver is 12V.    
-So, in order to have a single input source, a power section which inter converts this 12V to 5V for MCU. This is achieved by using a step-down buck regulator.
+Microcontrollers (MCUs) typically operate on 3.3V or 5V logic supply voltage, while the input voltage from the Li-Po battery for our Mazeblaze board's motor driver is 12V.    
+So, to have a single input source, a power section which inter converts this 12V to 5V for MCU. This is achieved by using a step-down buck regulator.
 Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC.
   
 ### Motor Driver :
@@ -534,7 +534,7 @@ Motors typically run on a 12V power supply, while microcontrollers (MCUs) usuall
 
 ### Protection against Reverse Voltage :
   
-In the MazeBlaze Board, we use diodes to shield against reverse voltage in the power line. 12V Motor line, MCU and buck regulator have been separated with SS34 and SS24 schottky diodes respectively.
+In the MazeBlaze Board, we use diodes to shield against reverse voltage in the power line. 12V Motor line, MCU, and buck regulator have been separated with SS34 and SS24 schottky diodes respectively.
 
 ### QTR-8RC line following reflectance IR sensor array :
   
@@ -546,24 +546,24 @@ The QTR-8RC line following reflectance IR sensor array is used to detect the whi
 
 ![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/89102630-e579-4126-8b0e-1be5089a3aa0)
 
-In mazeblaze board we use this battery as power source for motors & microcontroller. This battery is operating at 11.1 volts with a 1000mAh capacity, it provides a reliable and sustained power supply. Its high discharge rate of 40C ensures the ability to meet quick and intense power demands, making it an excellent choice for fast maze solving task.
+In the mazeblaze board, we use this battery as a power source for motors & microcontrollers. This battery is operating at 11.1 volts with a 1000mAh capacity, it provides a reliable and sustained power supply. Its high discharge rate of 40C ensures the ability to meet quick and intense power demands, making it an excellent choice for fast maze-solving tasks.
 
 ## Major Changes for Mazeblaze V3 Board
 | Features | MazeBlaze-V1 | MazeBlaze-V3 |
 | -------- | -------- | -------- |
 | Sensor   | TCRT5000 IR SENSOR | QTR-8RC line following reflectance IR sensor array |
-| Sensor Placement |on the main PCB and near to the wheels|Placed apart from the main PCB, the sensor can be adjustable and not closed to the wheels.|
+| Sensor Placement |on the main PCB and near the wheels|Placed apart from the main PCB, the sensor can be adjustable and not close to the wheels.|
 | Battery   | 3.7v Li-Po battery |11.1V 1000mAh 40C 3S Li-Po Battery |
 | Power Supply Unit| MT3608 Step UP Boost Converter is used for stepping up the voltage from 3.7V DC to 6V.|Buck Regulator IC LM2576-S-5 is used for stepping down the voltage from 12V to 5V DC|
 
 ### MT3608 Step UP Boost Converter to LM2576/96 Buck Convertor
-In MazeBlaze-V1 board, we used a 3.7V battery supply for the motors, that's why we require MT3608 boost converter to step-up the voltage from 3.7V to 6V for 6V N20 motors. However, in the MazeBlaze-V3 board, we utilize an 11.1V power source for 12V N20 motors, eliminating the need for a boost converter. And for the MCU (ESP), we require a 5V supply, for which we use a buck converter LM2576/96 due to their superior efficiency, higher output current, and increased reliability. The LM2576 have an efficiency up to 92%.
+In the MazeBlaze-V1 board, we used a 3.7V battery supply for the motors, that's why we require an MT3608 boost converter to step up the voltage from 3.7V to 6V for 6V N20 motors. However, in the MazeBlaze-V3 board, we utilize an 11.1V power source for 12V N20 motors, eliminating the need for a boost converter. For the MCU (ESP), we require a 5V supply, for which we use a buck converter LM2576/96 due to their superior efficiency, higher output current, and increased reliability. The LM2576 has an efficiency of up to 92%.
 
 ### TCRT5000 IR SENSOR to QTR-8RC line following reflectance IR sensor array
-In MazeBlaze-V1 board for line following and nodes detection we using TCRT5000 IR senosros but this sensors are not more efficient in maze solving. So, now in MazeBlaze-v3 we using QTR-8RC IR sensor. QTR-8RC is chosen because of its enhanced resolution, wider range, and reduced interference, offering improved line-following precision and adaptability, vital for our maze-solving bot project.
+In the MazeBlaze-V1 board for line following and node detection, we use TCRT5000 IR sensors but these sensors are not more efficient in maze solving. So, now in MazeBlaze-v3, we using a QTR-8RC IR sensor. QTR-8RC is chosen because of its enhanced resolution, wider range, and reduced interference, offering improved line-following precision and adaptability, vital for our maze-solving bot project.
 
 ### 3.7v Li-Po battery to 11.1V 1000mAh 40C 3S Li-Po Battery
-In MazeBlaze-v1, we used a 3.7V battery, but the motors needed more voltage, so we used an MT3608 Step-Up Boost Converter to raise it to 6V. In MazeBlaze-v3, we switched to 12V N20 motors, so we used an 11.1V 1000mAh 40C 3S Li-Po Battery, it also eliminate the need of boost converter and it also a lightweight and not bulky.
+In MazeBlaze-v1, we used a 3.7V battery, but the motors needed more voltage, so we used an MT3608 Step-Up Boost Converter to raise it to 6V. In MazeBlaze-v3, we switched to 12V N20 motors, so we used an 11.1V 1000mAh 40C 3S Li-Po Battery, it also eliminates the need for a boost converter and is also lightweight and not bulky.
 
 ### Sensor Placement on the main PCB to Placed apart from the main PCB
 In MazeBlaze-v1, the line sensor array was placed very close to the wheels, which didn't allow the bot enough time to turn after detecting a node. This limitation prevented the bot from running at high speeds. To address this issue in MazeBlaze-V3, we positioned the sensors further apart from the main PCB, allowing us to adjust their placement as needed.
