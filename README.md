@@ -19,14 +19,17 @@ Develop a Line following and Maze Solving bot based on PID controller which can 
 In this project, we will create a Line-following, Maze-solving bot which can find the shortest path in the given maze.
 
 ## Domains Explored
- Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electronics, PCB design.
+Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electronics, PCB design.
 
 ## Project Workflow
-- Learn to design PCB and understand the design of PCB used in MazeBlaze bot
-- Implementing left follow rule
-- Implementing path planing
-- Implementing Dijsktra's Algorithm
-- Implementing Flood Fill Algorithm
+- Learning firmware development by completing [Firmware task](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/firmware). Abd we also understand firware used in [SRA Wall-E](https://github.com/SRA-VJTI/Wall-E) and [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze).
+- Learning PCB design by completing the line sensor array [pcb_design](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/pcb%20design) task.   
+- For bot design Improvement we have created a detailed sheet to make the bot design better. In which we added advantages and disadvantages of many designs we've reviewed and chosen the best design for the MazeBlaze-v3 bot.
+- PCB Design for MazeBlaze-v3 by considering all points to make the bot design better.
+- Implementing left follow rule.
+- Implementing path planing.
+- Implementing dijsktra's algorithm.
+- Implementing floodfill algorithm.
   
 ## Demo
 
@@ -34,20 +37,34 @@ In this project, we will create a Line-following, Maze-solving bot which can fin
 
 👨‍💻MazeBlaze-v3.1
 - 📂Firmware
-  - 📂1_line_follow_rule //Contains code for left-follow-rule and path planning
+  - 📂1_left_follow_rule //Contains code for left-follow-rule and path planning
     - 📂main
-      - 📄main.c
+      - 📄1_left_follow_rule.c
       - 📄CMakeList.txt
     - 📄CMakeList.txt
   - 📂2_Dijkstra //Contains code for dijkstra`s algorithm
-- 📂Components //Contains all the header and source files used in the project
-  - 📂include
-  - 📂src
-  - 📂esp-wifi-logger
-  - 📄CMakeList.txt
-- 📂documentation
-- 📂pcb_design
+  - 📂Components //Contains all the header and source files used in the project
+     - 📂include
+     - 📂src
+     - 📂esp-wifi-logger
+     - 📄CMakeList.txt
+- 📂documentation //Contains documentation of project.
+- 📂pcb_design //Contains pcb_design files of MazeBlaze-v3 board
 - 📂task
+  - 📂 Atharv
+    - 📂firmware //Conatins led blink task files
+      - 📂main
+        - 📄1_ledblink.c
+        - 📄CMakeList.txt
+      - 📄CMakeList.txt
+    - 📂pcb_design //Conatins lsa pcb design task files
+  - 📂 suraj
+    - 📂firmware //Conatins led blink task files and documenation of task
+      - 📂main
+        - 📄1_ledblink.c
+        - 📄CMakeList.txt
+      - 📄CMakeList.txt
+    - 📂pcb_design //Conatins lsa pcb design task files and documenation of task
 
 ## Getting started
 ### Prerequisites
