@@ -32,6 +32,13 @@ Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electron
 - Implementing floodfill algorithm.
   
 ## Demo
+### LFR algorithm(Left follow rule):
+
+https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/7df0519c-4cf0-41a0-af8f-eac22bb00d04
+
+### Dijkstra's algorithm:
+
+https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/57cf2437-57e8-468f-b269-db0ec31de83d
 
 ## File Structure
 
