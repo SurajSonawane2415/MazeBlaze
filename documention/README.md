@@ -7,6 +7,7 @@
   - [Example of LFR](#example-of-lfr)
   - [Description Of Functions Used in LFR](#description-of-functions-used-in-lfr)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
+  - [Problems with current algorithm](#Problems-with-current-algorithm)
 - [Dijkstra's algorithm](#dijkstras-algorithm)
   - [Theory of Dijkstra's](#theory-of-dijkstras)
   - [Example of Dijkstra's](#example-of-dijkstras)
@@ -301,6 +302,12 @@ void final_straight()
 You can see this change in action in the video below:
 
 ![WhatsApp Video 2023-10-28 at 04 04 37_c621a96f (1)](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/45dbe1d9-1780-4b4f-a9ab-4ff0af11b0dc)
+
+## Problems with current algorithm
+The Left-Follow algorithm helps in reducing the redundancies from the path. However, the problem with Left-Follow rule is that the entire maze does not get mapped, and thus the path so obtained in final_run[ ] is not the most optimum path.
+
+However,The problem with Left-Follow rule is that the entire maze does not get mapped, and thus the path so obtained in final_run[ ] is not the most optimum path. That's why, after this algorithm, we implemented Dijkstra's algorithm, to obtain the shortest path.
+
 # Dijkstra's algorithm
 ## Theory of Dijkstra's
 
