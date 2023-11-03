@@ -1,13 +1,13 @@
 # MazeBlaze-v3.1
 
 # TABLE OF CONTENTS
-- [Left Follow Rule](#left-follow-rule-lfr)
+- [Left Follow Rule (LFR)](#left-follow-rule-lfr)
   - [Theory of LFR](#theory-of-lfr)
   - [Implementation of LFR](#implementation-of-lfr)
   - [Example of LFR](#example-of-lfr)
   - [Description Of Functions Used in LFR](#description-of-functions-used-in-lfr)
   - [Error Descriptions and Solution](#error-descriptions-and-solution)
-  - [Problems with current algorithm](#Problems-with-current-algorithm)
+  - [Problems with Left Follow Rule (LFR) algorithm](#Problems-with-Left-follow-rule-LFR-algorithm)
 - [Dijkstra's algorithm](#dijkstras-algorithm)
   - [Theory of Dijkstra's](#theory-of-dijkstras)
   - [Example of Dijkstra's](#example-of-dijkstras)
