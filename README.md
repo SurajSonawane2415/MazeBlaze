@@ -42,37 +42,43 @@ https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/57cf2437-57e8-46
 
 ## File Structure
 
-👨‍💻MazeBlaze-v3.1
-- 📂Firmware
-  - 📂1_left_follow_rule //Contains code for left-follow-rule and path planning
-    - 📂main
-      - 📄1_left_follow_rule.c
-      - 📄CMakeList.txt
-    - 📄CMakeList.txt
-  - 📂2_Dijkstra //Contains code for dijkstra`s algorithm
-  - 📂Components //Contains all the header and source files used in the project
-     - 📂include
-     - 📂src
-     - 📂esp-wifi-logger
-     - 📄CMakeList.txt
-- 📂documentation //Contains documentation of the project.
-- 📂pcb_design //Contains pcb_design files of MazeBlaze-v3 board
-- 📂task
-  - 📂 Atharv
-    - 📂firmware //Conatins led blink task files
-      - 📂main
-        - 📄1_ledblink.c
-        - 📄CMakeList.txt
-      - 📄CMakeList.txt
-    - 📂pcb_design //Conatins lsa PCB design task files
-  - 📂 suraj
-    - 📂firmware //Conatins led blink task files and documentation of the task
-      - 📂main
-        - 📄1_ledblink.c
-        - 📄CMakeList.txt
-      - 📄CMakeList.txt
-    - 📂pcb_design //Conatins lsa PCB design task files and documentation of the task
 
+```
+👨‍💻MazeBlaze-v3.1
+├ 📂 Firmware
+| └ 📂1_left_follow_rule //Contains code for left-follow-rule and path planning
+| | ├ 📂main
+| | |   ├ 📄1_left_follow_rule.c
+| | |   └ 📄CMakeList.txt
+| | ├ 📄CMakeList.txt
+| ├ 📂2_Dijkstra //Contains code for dijkstra`s algorithm   
+| └ 📂Components //Contains all the header and source files used in the project
+|   ├ 📂include
+|   ├ 📂src
+|   ├ 📂esp-wifi-logger
+|   ├ 📄CMakeList.txt
+├ 📂 assets
+├ 📂 documentation //Contains documentation of the project.
+├ 📂 pcb_design //Contains pcb_design files of MazeBlaze-v3 board
+├ 📂 task
+  ├ 📂 Atharv
+  | ├ 📂 firware 
+  | |  └📂 1_led_blink.c
+  | |    ├ 📂main
+  | |    |   ├ 📄1_led_blink.c
+  | |    |  └ 📄CMakeList.txt
+  | |    ├ 📄CMakeList.txt
+  | ├ 📂 pcb_design
+  ├ 📂 Suraj
+    ├ 📂 firware //Conatins led blink task files and documentation of the task
+    |  └📂 1_led_blink.c 
+    |    ├ 📂main
+    |    |   ├ 📄1_led_blink.c
+    |    |   └ 📄CMakeList.txt
+    |    ├ 📄CMakeList.txt
+    |    ├ 📄README.md
+    ├ 📂 pcb_design //Conatins lsa PCB design task files and documentation of the task
+```
 ## Getting started
 ### Prerequisites
 To download and use this code, the minimum requirements are:
