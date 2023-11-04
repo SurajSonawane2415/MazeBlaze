@@ -62,7 +62,7 @@ https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/57cf2437-57e8-46
 ├ 📂 pcb_design //Contains pcb_design files of MazeBlaze-v3 board
 ├ 📂 task
   ├ 📂 Atharv
-  | ├ 📂 firware 
+  | ├ 📂 firmware 
   | |  └📂 1_led_blink.c
   | |    ├ 📂main
   | |    |   ├ 📄1_led_blink.c
@@ -70,7 +70,7 @@ https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/57cf2437-57e8-46
   | |    ├ 📄CMakeList.txt
   | ├ 📂 pcb_design
   ├ 📂 Suraj
-    ├ 📂 firware //Conatins led blink task files and documentation of the task
+    ├ 📂 firmware //Conatins led blink task files and documentation of the task
     |  └📂 1_led_blink.c 
     |    ├ 📂main
     |    |   ├ 📄1_led_blink.c
@@ -123,7 +123,7 @@ To flash the code:
 
 ## Acknowledgements 
 - [SRA VJTI](https://sravjti.in/) Eklavya 2023
-- Special thanks to our mentors [Raj Gupta](https://github.com/RajGupta17), [Pritk Kannadiya](https://github.com/PritK99), and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
+- Special thanks to our mentors [Raj Gupta](https://github.com/RajGupta17), [Pritk Kanadiya](https://github.com/PritK99), and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
 
 ## License
 [MIT License](https://opensource.org/license/mit/)
