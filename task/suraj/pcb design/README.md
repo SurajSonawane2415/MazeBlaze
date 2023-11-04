@@ -1,5 +1,5 @@
 # PCB Design Task:
-In this task I designed a PCB for line sensor array(LSA) used in WALL-E. 
+In this task I designed a PCB for line sensor array(LSA) used in [SRA board](https://github.com/SRA-VJTI/sra-board-hardware-design). 
 ## Board images:
 - Front side:
   ![image](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/fa1b6c5a-2b7d-4a52-9643-440c6fd58297)
