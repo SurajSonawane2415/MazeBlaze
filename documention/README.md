@@ -478,10 +478,11 @@ int dir[] = {1,4,1,2,2,1,4,1,4,1,2,1,1,4,1,4,1,4,3,4,3,4,3,2,3,2,3,4,4,2,3,4,3,4
 In it, we have stored the direction that the bot takes to reach a node.
 
 
-
-
-
 # Printed Circuit Board (PCB) design
+
+![Screenshot 2023-11-04 191809](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/d8bf5450-0ffc-43a0-8b20-206639b4ce3b)
+
+
 ## Board images: 
 - Front side:
 
