@@ -6,6 +6,7 @@ Develop a Line following and Maze Solving bot based on PID controller which can 
 - [Project](#project)
    - [Table of Contents](#table-of-contents)
    - [About The Project](#about-the-project)
+   - [PCB MODEL](#pcb-model)
    - [Demo](#demo)
    - [File Structure](#file-structure)
    - [Getting started](#getting-started)
@@ -30,7 +31,8 @@ Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electron
 - Implementing path planning.
 - Implementing Dijkstra's algorithm.
 - Implementing flood-fill algorithm.
-  
+## PCB MODEL
+![Screenshot 2023-11-04 191809](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/c39003f3-1a3e-47aa-bcf5-b1e47b84d49c)
 ## Demo
 ### LFR algorithm(Left follow rule):
 
