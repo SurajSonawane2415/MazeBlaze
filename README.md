@@ -125,7 +125,7 @@ To flash the code:
 
 ## Acknowledgements 
 - [SRA VJTI](https://sravjti.in/) Eklavya 2023
-- Special thanks to our mentors [Raj Gupta](https://github.com/RajGupta17), [Pritk Kanadiya](https://github.com/PritK99), and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
+- Special thanks to our mentors [Raj Gupta](https://github.com/RajGupta17), [Prit Kanadiya](https://github.com/PritK99), and all the seniors at SRA, VJTI for their constant support and guidance throughout the project.
 
 ## License
 [MIT License](https://opensource.org/license/mit/)
