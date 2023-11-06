@@ -23,13 +23,13 @@ In this project, we will create a Line-following, Maze-solving bot that can find
 Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electronics, PCB design.
 
 ## Project Workflow
-- Learning firmware development by completing [Firmware task](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/firmware). Abd we also understand the firmware used in [SRA Wall-E](https://github.com/SRA-VJTI/Wall-E) and [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze).
+- Learning firmware development by completing [Firmware task](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/firmware). And we also understand the firmware used in [SRA Wall-E](https://github.com/SRA-VJTI/Wall-E) and [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze).
 - Learning PCB design by completing the line sensor array [pcb_design](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/pcb%20design) task.   
-- For bot design Improvement we have created a detailed sheet to make the bot design better. In which we added advantages and disadvantages of many designs we've reviewed and chosen the best design for the MazeBlaze-v3 bot.
+- For bot design improvement we created a detailed sheet to make the bot design better. In which we added the advantages and disadvantages of many designs we've reviewed and chosen the best design for the MazeBlaze-v3 bot.
 - PCB Design for MazeBlaze-v3 by considering all points to make the bot design better.
 - Implementing left follow rule.
 - Implementing path planning.
-- Implementing Dijkstra's algorithm.
+- Implementing dijkstra's algorithm.
 - Implementing flood-fill algorithm.
 ## PCB MODEL
 ![Screenshot 2023-11-04 191809](https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/c39003f3-1a3e-47aa-bcf5-b1e47b84d49c)
