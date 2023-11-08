@@ -40,9 +40,9 @@ const int weights[5] = {3, 1, 0, -1, -3};
     int floodfill_array[H][W] = {
     {2, 1, 2, 3, 4, 5, 6, 7},
     {1, 0, 1, 2, 3, 4, 5, 6},
-    {2, 1, 2, 3, 4, 5, 6, 7},
-    {3, 2, 3, 4, 5, 6, 7, 8},
-    {4, 3, 4, 5, 6, 7, 8, 9},
+    {2, 1, 2, 3, 4, 3, 6, 7},
+    {3, 2, 3, 4, 5, 4, 5, 8},
+    {4, 3, 4, 5, 6, 7, 6, 9},
     {5, 4, 5, 6, 7, 8, 7, 10},  // Updated value at [5][6]
     {6, 5, 6, 7, 8, 9, 10, 11},
     {7, 6, 7, 8, 9, 10, 11, 12}
@@ -289,17 +289,21 @@ void go_straight()
     get_raw_lsa();
     while((lsa_reading[0] == 1000 || lsa_reading[4] == 1000))
     {
-    get_raw_lsa();
-    calculate_error();
-    calculate_correction();
+        get_raw_lsa();
+        calculate_error();
+        calculate_correction();
 
-    left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
-    right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+        left_duty_cycle = bound((GOOD_DUTY_CYCLE - correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
+        right_duty_cycle = bound((GOOD_DUTY_CYCLE + correction), MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
 
-    set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
-    set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
-
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+        set_motor_speed(MOTOR_A_1, MOTOR_FORWARD, left_duty_cycle); /*goes forward in this case*/
+        set_motor_speed(MOTOR_A_0, MOTOR_BACKWARD, right_duty_cycle);
+        printf("staight taking\n");
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+    if((lsa_reading[0] == 0 || lsa_reading[4] == 0))
+    {
+        straight = 0;
     }
 }
     
@@ -341,19 +345,19 @@ void set_coordinates()
                     printf("\t North\n");
                     l1=x-1;
                     l2=y;
-                    r1=x;
-                    r2=y+1;
-                    s1=x-1;
-                    s2=y;
-                    u1=x+1;
-                    u2=y;
+                    r1=x+1;
+                    r2=y;
+                    s1=x;
+                    s2=y-1;
+                    u1=x;
+                    u2=y+1;
                     break;
                 case 1:
                     printf("\t East\n");
-                    l1=x-1;
-                    l2=y;
-                    r1=x+1;
-                    r2=y;
+                    l1=x;
+                    l2=y-1;
+                    r1=x;
+                    r2=y+1;
                     s1=x;
                     s2=y+1;
                     u1=x;
@@ -361,6 +365,17 @@ void set_coordinates()
                     break;
                 case 2:
                     printf("\t South\n");
+                    l1=x+1;
+                    l2=y;
+                    r1=x-1;
+                    r2=y;
+                    s1=x;
+                    s2=y+1;
+                    u1=x;
+                    u2=y-1;
+                    break;
+                case 3:
+                    printf("\t West\n");
                     l1=x;
                     l2=y+1;
                     r1=x;
@@ -369,17 +384,6 @@ void set_coordinates()
                     s2=y;
                     u1=x+1;
                     u2=y;
-                    break;
-                case 3:
-                    printf("\t West\n");
-                    l1=x+1;
-                    l2=y;
-                    r1=x-1;
-                    r2=y;
-                    s1=x;
-                    s2=y-1;
-                    u1=x;
-                    u2=y+1;
                     break;
             }
         }
@@ -478,9 +482,9 @@ void mazetravel()
         printf("l1 = %d, l2= %d\n", l1, l2);
         printf("r1= %d, r2= %d\n", r1, r2);
         printf("s1 = %d, s2= %d\n", s1, s2);
-        printf("floodfill_array[l1][l2] = %d, floodfill_array[y][x] = %d\n", floodfill_array[l1][l2], floodfill_array[y][x]);
-        printf("floodfill_array[r1][r2] = %d, floodfill_array[y][x] = %d\n", floodfill_array[r1][r2], floodfill_array[y][x]);
-        printf("floodfill_array[s1][s2] = %d, floodfill_array[y][x] = %d\n", floodfill_array[s1][s2], floodfill_array[y][x]);
+        printf("floodfill_array[l2][l1] = %d, floodfill_array[y][x] = %d\n", floodfill_array[l2][l1], floodfill_array[y][x]);
+        printf("floodfill_array[r2][r1] = %d, floodfill_array[y][x] = %d\n", floodfill_array[r2][r1], floodfill_array[y][x]);
+        printf("floodfill_array[s2][s1] = %d, floodfill_array[y][x] = %d\n", floodfill_array[s2][s1], floodfill_array[y][x]);
 
         if ((lsa_reading[0] == 1000) && (lsa_reading[1] == 1000) && (lsa_reading[2] == 1000) && (lsa_reading[4] == 0))
         {
@@ -497,7 +501,7 @@ void mazetravel()
             get_raw_lsa();
             if(lsa_reading[2]==0)
             { 
-                if(floodfill_array[l1][l2]<floodfill_array[y][x])
+                if(floodfill_array[l2][l1]<floodfill_array[y][x])
                 {
                 
                     printf("leftcheck2\n");
@@ -505,7 +509,7 @@ void mazetravel()
                     cells_checking = 0;
                 
                 }
-                if(floodfill_array[l1][l2]>floodfill_array[y][x])
+                if(floodfill_array[l2][l1]>floodfill_array[y][x])
                 {
                     printf("floodfill\n");
                     perform_floodfill = 1;
@@ -515,7 +519,7 @@ void mazetravel()
 
             if(lsa_reading[2]==1000)
             {
-                if(floodfill_array[l1][l2]<floodfill_array[y][x])
+                if(floodfill_array[l2][l1]<floodfill_array[y][x])
                 {
                 
                     printf("leftcheck2\n");
@@ -523,17 +527,17 @@ void mazetravel()
                     cells_checking = 0;
                 
                 }
-                if((floodfill_array[s1][s2]<floodfill_array[y][x]) && (left_turn == 0))
+                if((floodfill_array[s2][s1]<floodfill_array[y][x]) && (left_turn == 0))
                 {
                 
-                    printf("straight\n");
+                    printf("straight left\n");
                     straight = 1;
                     cells_checking = 0;
                 
                 }
-                if((floodfill_array[s1][s2]>floodfill_array[y][x]) || floodfill_array[l1][l2]>floodfill_array[y][x])
+                if(((floodfill_array[s2][s1]>floodfill_array[y][x]) || (floodfill_array[l2][l1]>floodfill_array[y][x])) && (straight == 0))
                 {
-                    printf("floodfill\n");
+                    printf("floodfill after left straight\n");
                     perform_floodfill = 1;
                     cells_checking = 0;
                 }
@@ -558,7 +562,7 @@ void mazetravel()
                 get_raw_lsa();
                 if(lsa_reading[2]==0)
                 {
-                    if(floodfill_array[r1][r2] < floodfill_array[y][x])
+                    if(floodfill_array[r2][r1] < floodfill_array[y][x])
                     {
                     
                         printf("right\n");
@@ -566,7 +570,7 @@ void mazetravel()
                         cells_checking = 0;
                     
                     }
-                    if(floodfill_array[r1][r2]>floodfill_array[y][x])
+                    if(floodfill_array[r2][r1]>floodfill_array[y][x])
                     {
                         printf("floodfill2\n");
                         perform_floodfill = 1;
@@ -575,8 +579,14 @@ void mazetravel()
                 }
 
                 if(lsa_reading[2]==1000)
-                {
-                    if((floodfill_array[r1][r2]<floodfill_array[y][x]))
+                               if((floodfill_array[s2][s1]>floodfill_array[y][x]) || (floodfill_array[r2][r1]<floodfill_array[y][x]))
+                    {
+                        printf("floodfill1\n");
+                        perform_floodfill = 1;
+                        cells_checking = 0;
+                    }     {
+                   
+                    if((floodfill_array[r2][r1]<floodfill_array[y][x]))
                     {
                     
                         printf("right\n");
@@ -584,7 +594,8 @@ void mazetravel()
                         cells_checking = 0;
                     
                     }
-                    if((floodfill_array[s1][s2]<floodfill_array[y][x]) && (right_turn == 0) && (lsa_reading[2] != 0))
+
+                    if((floodfill_array[s2][s1]<floodfill_array[y][x]) && (right_turn == 0) && (lsa_reading[2] != 0))
                     {
                     
                         printf("staight right\n");
@@ -592,12 +603,14 @@ void mazetravel()
                         cells_checking = 0;
                     
                     }
-                    if((floodfill_array[s1][s2]>floodfill_array[y][x]) || (floodfill_array[r1][r2]<floodfill_array[y][x]))
-                    {
-                        printf("floodfill1\n");
+
+                    if(((floodfill_array[s2][s1]>floodfill_array[y][x]) || (floodfill_array[r2][r1]>floodfill_array[y][x])) && (straight == 0))
+                    {   
+                        printf("floodfillright\n");
                         perform_floodfill = 1;
                         cells_checking = 0;
                     }
+
                 }
             }
 
@@ -625,6 +638,9 @@ void mazetravel()
 
         if(straight==1)
         {
+         orient = orient;
+         updateCoordinates(&x, &y, orient);
+         printf("staight in\n");
          go_straight();
         }
     }
