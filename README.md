@@ -36,7 +36,7 @@ Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electron
 ## Demo
 ### LFR algorithm(Left follow rule):
 
-https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/7df0519c-4cf0-41a0-af8f-eac22bb00d04
+https://github.com/SurajSonawane2415/MazeBlaze/assets/129578177/a419bddd-6653-45e9-b566-6e79a6069aff
 
 ### Dijkstra's algorithm:
 
