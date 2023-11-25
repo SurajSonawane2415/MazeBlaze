@@ -1,5 +1,5 @@
 # MazeBlaze
-Develop a Line following and Maze Solving bot based on PID controller which can find the shortest path in a given maze.
+Develop a Line following and Maze Solving bot based on PID controller that can find the shortest path in a given maze.
 
 ## Table of Contents
 
@@ -20,11 +20,11 @@ Develop a Line following and Maze Solving bot based on PID controller which can 
 In this project, we will create a Line-following, Maze-solving bot that can find the shortest path in the given maze.
 
 ## Domains Explored
-Artificial Intelligence, Embedded C, Control Systems, Graph algorithms, Electronics, PCB design.
+Artificial Intelligence, Embedded C, Control Systems, Graph Algorithms, Electronics and PCB Design
 
 ## Project Workflow
 - Learning firmware development by completing [Firmware task](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/firmware). And we also understand the firmware used in [SRA Wall-E](https://github.com/SRA-VJTI/Wall-E) and [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze).
-- Learning PCB design by completing the line sensor array [pcb_design](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/pcb%20design) task.   
+- Learning PCB design by completing the line sensor array [pcb_design](https://github.com/SurajSonawane2415/MazeBlaze/tree/main/task/suraj/pcb%20design) task.
 - For bot design improvement we created a detailed sheet to make the bot design better. In which we added the advantages and disadvantages of many designs we've reviewed and chosen the best design for the MazeBlaze-v3 bot.
 - PCB Design for MazeBlaze-v3 by considering all points to make the bot design better.
 - Implementing left follow rule.
@@ -121,7 +121,7 @@ To flash the code:
 - [MazeBlaze-v2](https://github.com/PritK99/MazeBlaze) GitHub repository of MazeBlaze-v2 
 - [MazeBlaze-v1](https://github.com/ChinmayLonkar/MAZEBLAZE) GitHub repository of MazeBlaze-v1
 - [Dikstra's](https://www-geeksforgeeks-org.cdn.ampproject.org/v/s/www.geeksforgeeks.org/printing-paths-dijkstras-shortest-path-algorithm/amp/?usqp=mq331AQIUAKwASCAAgM%3D&amp_js_v=a9&amp_gsa=1#referrer=https%3A%2F%2Fwww.google.com&csi=1&ampshare=https%3A%2F%2Fwww.geeksforgeeks.org%2Fprinting-paths-dijkstras-shortest-path-algorithm%2Famp%2F%23referrer%3Dhttps%253A%252F%252Fwww.google.com%26csi%3D1%26ampshare%3Dhttps%253A%252F%252Fwww.geeksforgeeks.org%252Fprinting-paths-dijkstras-shortest-path-algorithm%252F) Implementation of dijkstr's algorithm in c.
-- [Floodfill](https://github.com/Isuru-Dissanayake/piccola) Implementation of floodfill algorithm (simulation).
+- [Floodfill](https://github.com/Isuru-Dissanayake/piccola) Implementation of the Floodfill algorithm (simulation).
 
 ## Acknowledgements 
 - [SRA VJTI](https://sravjti.in/) Eklavya 2023
